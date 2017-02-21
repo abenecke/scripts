@@ -1,0 +1,15 @@
+<p>Rates for all observables and processes as given by the 'nominal' templates. If errors are given, they are MC stat. uncertainties.</p>
+<table cellpadding="2" border="1">
+<tr><th>process / observable</th><th>MZPrime_TPrime1200WB_higgsnotop</th><th>MZPrime_TPrime1200WB_higgstop</th><th>MZPrime_TPrime1200WB_zwnotop</th><th>MZPrime_TPrime1200WB_zwtop</th></tr>
+<tr><td>DYJetsToLL</td><td>0.20289 +/- 0.080972</td><td>0</td><td>15.968 +/- 0.45288</td><td>0.035948 +/- 0.016764</td></tr>
+<tr><td>QCD</td><td>0.14153 +/- 0.13993</td><td>0</td><td>52.882 +/- 13.33</td><td>0</td></tr>
+<tr><td>ST</td><td>1.1843 +/- 0.4122</td><td>0</td><td>61.872 +/- 2.6801</td><td>0.32388 +/- 0.17812</td></tr>
+<tr><td>TTbar</td><td>22.683 +/- 0.8595</td><td>0.085468 +/- 0.039544</td><td>787.25 +/- 3.6905</td><td>6.2676 +/- 0.33586</td></tr>
+<tr><td>WJets</td><td>0.4909 +/- 0.091419</td><td>3.2427e-05 +/- 3.2427e-05</td><td>55.454 +/- 1.5728</td><td>0.14914 +/- 0.041368</td></tr>
+<tr><td><b>total background</b></td><td>24.703 +/- 0.97116</td><td>0.0855 +/- 0.039544</td><td>973.43 +/- 14.184</td><td>6.7766 +/- 0.38278</td></tr>
+<tr><td>MC_ZPrime1500ToTPrime1200T_TPrimeToWB</td><td>0.28463 +/- 0.077906</td><td>0</td><td>10.714 +/- 0.36585</td><td>0.078824 +/- 0.031688</td></tr>
+<tr><td>MC_ZPrime2000ToTPrime1200T_TPrimeToWB</td><td>0.16061 +/- 0.066757</td><td>0</td><td>18.842 +/- 0.53714</td><td>0.14707 +/- 0.047648</td></tr>
+<tr><td>MC_ZPrime2500ToTPrime1200T_TPrimeToWB</td><td>0.12897 +/- 0.03937</td><td>0</td><td>21.342 +/- 0.53753</td><td>0.18803 +/- 0.048078</td></tr>
+<tr><td><b>DATA</b></td><td>14</td><td>0</td><td>974</td><td>9</td></tr>
+</table>
+

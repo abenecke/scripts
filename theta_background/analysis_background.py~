@@ -1,0 +1,95 @@
+model = build_model_from_rootfile('/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/Sideband_Data/theta_histograms_background_MZPrime.root',include_mc_uncertainties = True)
+model.fill_histogram_zerobins()
+model.set_signal_processes('MC_ZPrime*')
+model.add_lognormal_uncertainty('wj_rate', math.log(1.5), 'WJets')
+model.add_lognormal_uncertainty('zj_rate', math.log(1.5), 'DYJetsToLL')
+model.add_lognormal_uncertainty('ttbar_rate', math.log(1.5), 'TTbar')
+model.add_lognormal_uncertainty('qcd_rate', math.log(2.0), 'QCD')
+model.add_lognormal_uncertainty('st_rate', math.log(1.5), 'ST')
+
+
+
+options = Options()
+options.set('minimizer', 'strategy', 'newton_vanilla')
+
+sig_a = ['MC_ZPrime1500ToTPrime1200T_TPrimeToHT','MC_ZPrime2000ToTPrime1200T_TPrimeToHT','MC_ZPrime2500ToTPrime1200T_TPrimeToHT']
+sig = 'MC_ZPrime'
+
+res = mle(model,'data', 1, signal_process_groups = {'': []},with_covariance = True, chi2 = True, options = options)
+#res = mle(model,'data', 1, signal_process_groups = {sig: sig_a},with_covariance = True, chi2 = True, options = options)
+
+from numpy import linalg as LA
+cov2 = res[sig]['__cov'][0]
+
+cov = numpy.array(cov2)
+
+print '\n'
+print 'covmatrix: '
+for i in range(0,len(cov)):
+    line = ''
+    for j in range(0,len(cov)):
+        line +='%.3f' % cov[i][j] + ' '
+    print line      
+
+print '\n'
+
+
+print '\\n-- MLE: fit results (# = '+str(len(res[sig][model.get_parameters(sig_a)[0]]))+')'
+fitres = {}
+print 'chi2 =',res[sig]['__chi2']
+print '\n'
+print 'MLE values mean and dev'
+file1 = open('mle_fit.txt', 'w')
+for p in model.get_parameters(sig_a):
+    mean = sdev = 0.0
+    for pair in res[sig][p]:
+        mean += pair[0]
+        sdev += pair[1]
+    mean /= len(res[sig][p])
+    sdev /= len(res[sig][p])
+    fitres[p] = {}
+    fitres[p][0] = mean
+    fitres[p][1] = sdev
+    line = ''
+    if mean>=0: line += ' '
+    line += ' %.3f' % mean + '  %.3f' % sdev + '  ' + p
+    print line
+    file1.write(line+'\n')
+par_values = {}
+par_error = {}
+for p in model.get_parameters([]):
+    par_values[p] = fitres[p][0]
+    par_error[p]=fitres[p][1]
+# rate-scale factors for each process in each observable
+mle_coeff = {}
+for obs in model.get_observables():
+    mle_coeff[obs] = {}
+    for p in model.get_processes(obs):
+        coeff = model.get_coeff(obs, p).get_value(par_values)
+        mle_coeff[obs][p] = coeff
+        
+
+
+
+# add stuff.. eg make histograms at the ML point
+print '\n'
+
+print 'scale factors'
+for p in par_values:
+    if p == 'ttbar_rate':     print '%.3f' % model.get_coeff('MZPrime_TPrime1200HT_side2_btag1', 'TTbar').get_value(par_values)+'  +/- '+'%.3f' % (model.get_coeff('MZPrime_TPrime1200HT_side2_btag1', 'TTbar').get_value(par_error)-1) + ' ' + p 
+    elif p == 'wj_rate':      print '%.3f' % model.get_coeff('MZPrime_TPrime1200HT_side2_btag1', 'WJets').get_value(par_values)+'  +/- '+'%.3f' % (model.get_coeff('MZPrime_TPrime1200HT_side2_btag1', 'WJets').get_value(par_error)-1) + ' ' + p 
+    elif p == 'wl_rate':      print '%.3f' % 1.09**par_values[p] + ' ' + p
+    elif p == 'wc_rate':      print '%.3f' % 1.23**par_values[p] + ' ' + p
+    elif p == 'wb_rate':      print '%.3f' % 1.23**par_values[p] + ' ' + p
+    elif p == 'st_rate':      print '%.3f' % model.get_coeff('MZPrime_TPrime1200HT_side2_btag1', 'ST').get_value(par_values)+'  +/- '+'%.3f' % (model.get_coeff('MZPrime_TPrime1200HT_side2_btag1', 'ST').get_value(par_error)-1) + ' ' + p 
+    elif p == 'zj_rate':      print '%.3f' % model.get_coeff('MZPrime_TPrime1200HT_side2_btag1', 'DYJetsToLL').get_value(par_values)+'  +/- '+'%.3f' %( model.get_coeff('MZPrime_TPrime1200HT_side2_btag1', 'DYJetsToLL').get_value(par_error)-1) + ' ' + p 
+    elif p == 'diboson_rate': print '%.3f' % 1.20**par_values[p] + ' ' + p
+    elif p == 'qcd_rate':  print '%.3f' % model.get_coeff('MZPrime_TPrime1200HT_side2_btag1', 'QCD').get_value(par_values)+'  +/- '+'%.3f' % (model.get_coeff('MZPrime_TPrime1200HT_side2_btag1', 'QCD').get_value(par_error)-1) + ' ' + p 
+    elif p == 'toptag':       print '%.3f' % 1.20**par_values[p] + ' ' + p
+    elif p == 'subjbtag':     print '%.3f' % 1.20**par_values[p] + ' ' + p
+
+model_summary(model)
+#print res
+print '\n'
+print 'writing results to html file...'
+report.write_html('')

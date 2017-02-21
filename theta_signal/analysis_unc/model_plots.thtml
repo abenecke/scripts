@@ -1,0 +1,16 @@
+<h2>Stackplots</h2>
+<p>Everything normalized to expectation, i.e., to the normalization in the template input file, possibly scaled via the python script file.</p>
+<p>Color Code:</p><ul>
+<li><span style="background: #edd400;">&nbsp;&nbsp;&nbsp;</span> DYJetsToLL</li>
+<li><span style="background: #ef2929;">&nbsp;&nbsp;&nbsp;</span> MC_ZPrime1500ToTPrime1200T_TPrimeToWB</li>
+<li><span style="background: #cc0000;">&nbsp;&nbsp;&nbsp;</span> MC_ZPrime2000ToTPrime1200T_TPrimeToWB</li>
+<li><span style="background: #a40000;">&nbsp;&nbsp;&nbsp;</span> MC_ZPrime2500ToTPrime1200T_TPrimeToWB</li>
+<li><span style="background: #f57900;">&nbsp;&nbsp;&nbsp;</span> QCD</li>
+<li><span style="background: #c17d11;">&nbsp;&nbsp;&nbsp;</span> ST</li>
+<li><span style="background: #73d216;">&nbsp;&nbsp;&nbsp;</span> TTbar</li>
+<li><span style="background: #3465a4;">&nbsp;&nbsp;&nbsp;</span> WJets</li>
+</ul>
+<p>Observable 'MZPrime_TPrime1200WB_higgsnotop':<br /><img src="plots/MZPrime_TPrime1200WB_higgsnotop_stack.png" /></p>
+<p>Observable 'MZPrime_TPrime1200WB_higgstop':<br /><img src="plots/MZPrime_TPrime1200WB_higgstop_stack.png" /></p>
+<p>Observable 'MZPrime_TPrime1200WB_zwnotop':<br /><img src="plots/MZPrime_TPrime1200WB_zwnotop_stack.png" /></p>
+<p>Observable 'MZPrime_TPrime1200WB_zwtop':<br /><img src="plots/MZPrime_TPrime1200WB_zwtop_stack.png" /></p>

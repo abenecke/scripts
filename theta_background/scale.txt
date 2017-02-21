@@ -1,0 +1,80 @@
+
+
+
+//Original
+  0.752  0.179  qcd_rate
+ -0.198  0.767  st_rate
+ -1.550  0.244  ttbar_rate
+ -0.380  0.125  wj_rate
+ -1.115  0.665  zj_rate
+
+
+
+
+//TTbar fehler 2.0 (1.15)
+
+  0.766  0.182  qcd_rate
+  0.007  0.784  st_rate
+ -0.334  0.054  ttbar_rate
+ -0.390  0.126  wj_rate
+ -1.086  0.661  zj_rate
+
+//TTbar fehler 5.0 (1.15)
+  0.766  0.179  qcd_rate
+  0.016  0.760  st_rate
+ -0.144  0.023  ttbar_rate
+ -0.391  0.123  wj_rate
+ -1.085  0.638  zj_rate
+
+//TTbar fehler 10.0 (1.15)
+  0.766  0.183  qcd_rate
+  0.016  0.795  st_rate
+ -0.101  0.016  ttbar_rate
+ -0.391  0.127  wj_rate
+ -1.085  0.670  zj_rate
+
+
+//WJets fehler 2.0 (1.5)
+ 0.756  0.178  qcd_rate
+ -0.200  0.767  st_rate
+ -1.551  0.244  ttbar_rate
+ -0.225  0.073  wj_rate
+ -1.101  0.661  zj_rate
+
+//WJets & ttbar 20
+  0.771  0.182  qcd_rate
+  0.014  0.771  st_rate
+ -0.078  0.012  ttbar_rate
+ -0.054  0.017  wj_rate
+ -1.063  0.663  zj_rate
+
+//WJets & ttbar 5
+  0.771  0.170  qcd_rate
+  0.013  0.617  st_rate
+ -0.144  0.021  ttbar_rate
+ -0.100  0.031  wj_rate
+ -1.064  0.636  zj_rate
+
+
+//alle auf 20
+  0.221  0.040  qcd_rate
+ -0.209  0.240  st_rate
+ -0.067  0.013  ttbar_rate
+ -0.031  0.016  wj_rate
+ -0.608  0.341  zj_rate
+
+
+//alle auf 10
+  0.282  0.053  qcd_rate
+ -0.226  0.300  st_rate
+ -0.089  0.018  ttbar_rate
+ -0.043  0.021  wj_rate
+ -0.686  0.383  zj_rate
+
+//alle auf 5
+  0.391  0.078  qcd_rate
+ -0.233  0.394  st_rate
+ -0.131  0.027  ttbar_rate
+ -0.067  0.031  wj_rate
+ -0.794  0.414  zj_rate
+
