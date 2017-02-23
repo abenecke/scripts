@@ -5,16 +5,21 @@ using namespace std;
 
 void fit_erf()
 {
+  
+  bool b_error=false;
+  TString unc_name = "none"; // "jersmear_up" , "jersmear_down" ,"jecsmear_up" , "jecsmear_down" , "none"
+  TString mistag_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/mass/hists/";
+  TString folder ="erf/test_";
+  // TString folder ="~/ownCloud/masterarbeit/tex/plots/efficiency/master_";
+  TString unc_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/eff/hists/";
+
+
   //setOptFit( pcev (default = 0111)) Probability; Chisquare/Number of degrees of freedom; errors ;values of parameters 
   gStyle->SetOptFit(1111);
   gStyle->SetOptStat(0);
-  bool b_error=false;
-  TString direction = "nominal";
-  TSring unc_name = "none";
-  TString mistag_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/pictures/QCD/mass/mistagrate/hists"
 
   //All files are read in
-  TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/eff";
+  TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/eff/"+unc_name;
   TString bkgfolder = "";
   TFile * data_f = new TFile(directory+"/uhh2.AnalysisModuleRunner.Data.Data.root", "READ");
   TFile * TTbar_matched_f = new TFile(directory+"/uhh2.AnalysisModuleRunner.MC.TTbar_right.root", "READ");
@@ -32,19 +37,31 @@ void fit_erf()
   TH1F* other = (TH1F*)other_f->Get(hist_name);
   TH1F* QCD = (TH1F*)QCD_f->Get(hist_name);
 
-  TString folder ="erf/test_";
+ 
   // -------------------
   //Background Fit
   // -------------------
   TCanvas *background_c = new TCanvas("background_c","background fit",10,10,700,900);
+  gPad->SetTickx();
+  gPad->SetTicky();
   background_c->Clear();
   background_c->cd();
 
+
+
+  TTbar_unmatched->SetXTitle("M_{W}^{rec} [GeV/c^{2}]");
+  TTbar_unmatched->SetYTitle("Events");
+  TTbar_unmatched->SetTitleSize(0.045);
+  TTbar_unmatched->GetYaxis()->SetTitleSize(0.045);
+  TTbar_unmatched->GetYaxis()->SetTitleOffset(1.1);
+  TTbar_unmatched->SetTitle("");
   TTbar_unmatched->SetMarkerStyle(20);
   TTbar_unmatched->SetMarkerSize(1.);
   TTbar_unmatched->SetLineColor(kBlue+1);
   TTbar_unmatched->SetMarkerColor(kBlue+1);
+  TTbar_unmatched->GetYaxis()->SetRangeUser(130, 60);
   TTbar_unmatched->Draw("E1");
+
 
   TH1D* back = (TH1D*)TTbar_unmatched->Clone();
   back->Add(other);
@@ -56,14 +73,40 @@ void fit_erf()
   background_fit->SetParameter(0, 4);
   background_fit->SetParameter(1, 100);
   background_fit->SetParameter(2, 20);
- 
+
   background_fit->SetLineColor(kOrange+2);
-  background_fit->SetLineStyle(kDashed);
+  // background_fit->SetLineStyle(kDashed);
+  background_fit->SetLineStyle(7);
+  background_fit->SetLineWidth(5);
+ 
+
 
   back->Draw("PZ");
   back->Fit(background_fit, "R");
   background_fit->DrawClone("same");
- 
+
+
+  TString info = "unmatched t#bar{t} events";
+  TString info2 = "24 GeV < m_{W} < 182 GeV";
+  //  TString info3 = "f(x) = p0 erf #left(#frac{x-p1}{p2}#right)";
+  TString info3 = "bkg(x) = p0 * erf((x-p1)/p2)";
+  TLatex* text = new TLatex();
+  text->SetTextFont(62);
+  text->SetNDC();
+  text->SetTextColor(kBlue+1);
+  text->SetTextSize(0.035);
+  text->DrawLatex(0.15, 0.83, info.Data());
+ TLatex* text2 = new TLatex();
+  text2->SetTextFont(62);
+  text2->SetNDC();
+  text2->SetTextColor(kOrange+2);
+  text2->SetTextSize(0.035);
+  text2->DrawLatex(0.15, 0.79, info3.Data());
+  text2->DrawLatex(0.15, 0.75, info2.Data());
+
+
+
+
   background_c->Print(folder +"background_fit.eps");
   
   // -------------------
@@ -71,13 +114,21 @@ void fit_erf()
   // -------------------
   
   TCanvas *signal_c = new TCanvas("signal_c","signal fit",10,10,700,900);
+  gPad->SetTickx();
+  gPad->SetTicky();
   signal_c->Clear();
   signal_c->cd();
-  
+  TTbar_matched->SetXTitle("M_{W}^{rec} [GeV/c^{2}]");
+  TTbar_matched->SetYTitle("Events");
+  TTbar_matched->SetTitleSize(0.045);
+  TTbar_matched->GetYaxis()->SetTitleSize(0.045);
+  TTbar_matched->GetYaxis()->SetTitleOffset(1.1);
+  TTbar_matched->SetTitle("");
   TTbar_matched->SetMarkerStyle(24);
   TTbar_matched->SetMarkerSize(1.);
   TTbar_matched->SetLineColor(kRed);
   TTbar_matched->SetMarkerColor(kRed);
+  TTbar_matched ->GetYaxis()->SetRangeUser(0, 65);
   TTbar_matched->Draw("PZ");
 
   /////////////////////////   Fit function (Signal)  ////////////////////////
@@ -87,25 +138,64 @@ void fit_erf()
   signal_fit->SetParameter(2, 92);
   signal_fit->SetParameter(3, 40);
  
-  signal_fit->SetLineStyle(kDashed);
+  // signal_fit->SetLineStyle(kDashed);
   signal_fit->SetLineColor(kGreen+3);
+  signal_fit->SetLineStyle(7);
+  signal_fit->SetLineWidth(4);
 
   TTbar_matched->Fit(signal_fit,"R");
   signal_fit->DrawClone("same");
+
+  info = "matched t#bar{t} events";
+  info2 = "24 GeV < m_{W} < 182 GeV";
+  //  TString info3 = "f(x) = p0 erf #left(#frac{x-p1}{p2}#right)";
+  info3 = "sig(x) = p3 * Voigt(x-p2,p0)";
+  text->SetTextFont(62);
+  text->SetNDC();
+  text->SetTextColor(kRed+1);
+  text->SetTextSize(0.035);
+  text->DrawLatex(0.15, 0.83, info.Data());
+ 
+  text2->SetTextFont(62);
+  text2->SetNDC();
+  text2->SetTextColor(kGreen+3);
+  text2->SetTextSize(0.035);
+  text2->DrawLatex(0.15, 0.79, info3.Data());
+  text2->DrawLatex(0.15, 0.75, info2.Data());
+
+  TH1D* all = (TH1D*)TTbar_matched->Clone();
+  all->Add(back);
+ 
  
   signal_c->Print(folder +"signal_fit.eps");
+
+
+  gStyle->SetStatH(0.2);
+ 
+
   // ------------------------
   // Signal + Background fit
   // ------------------------
   TCanvas *signal_background_c = new TCanvas("signal_background_c","signal+background fit",10,10,700,900);
+  gPad->SetTickx();
+  gPad->SetTicky();
   signal_background_c->Clear();
   signal_background_c->cd();
 
-  TH1D* all = (TH1D*)TTbar_matched->Clone();
-  all->Add(back);
+
+
+  // TH1D* all = (TH1D*)TTbar_matched->Clone();
+  // all->Add(back);
+  all->SetXTitle("M_{W}^{rec} [GeV/c^{2}]");
+  all->SetYTitle("Events");
+  all->SetTitleSize(0.045);
+  all->GetYaxis()->SetTitleSize(0.045);
+  all->GetYaxis()->SetTitleOffset(1.1);
+  all->SetTitle("");
+  all->GetYaxis()->SetRangeUser(0, 130);
   all->SetMarkerStyle(24);
-  all->SetMarkerColor(kRed+1);
-  all->SetLineColor(kRed+1);
+  all->SetMarkerColor(kBlack);
+  all->SetLineColor(kBlack);
   all->Draw("PZ");
 
   /////////////////////////   Fit function (Signal+background)  ////////////////////////
@@ -122,7 +212,9 @@ void fit_erf()
   signal_background_fit->SetParameter(6, background_fit->GetParameter(2));
  
 
-  signal_background_fit->SetLineColor(kGreen+3);
+  signal_background_fit->SetLineColor(kViolet);
+
+
   all->Fit(signal_background_fit, "R");
   TFitResultPtr fit_all_result = all->Fit(signal_background_fit, "SR");
   signal_background_fit->DrawClone("same");
@@ -136,14 +228,35 @@ void fit_erf()
   f->SetLineColor(kBlack);
   TH1F *back2 = (TH1F*) back->Clone();
   back2->SetStats(0);
-  back2->Draw("same");
+  // back2->Draw("same");
   TF1* bc = (TF1*) background_fit->Clone();
   bc->SetParameter(0, signal_background_fit->GetParameter(4));
   bc->SetParameter(1, signal_background_fit->GetParameter(5));  
   bc->SetParameter(2, signal_background_fit->GetParameter(6));  
   bc->SetLineColor(kOrange+2);
-  bc->SetLineStyle(kDashed);
+  // bc->SetLineStyle(kDashed);
+  bc->SetLineStyle(7);
+  bc->SetLineWidth(4);
   bc->DrawClone("same");
+
+  info = " t#bar{t} events";
+  info2 = "24 GeV < m_{W} < 182 GeV";
+  //  TString info3 = "f(x) = p0 erf #left(#frac{x-p1}{p2}#right)";
+  info3 = "f(x) = sig(x) + bkg(x)";
+  text->SetTextFont(62);
+  text->SetNDC();
+  text->SetTextColor(kBlack);
+  text->SetTextSize(0.035);
+  text->DrawLatex(0.15, 0.83, info.Data());
+ 
+  text2->SetTextFont(62);
+  text2->SetNDC();
+  text2->SetTextColor(kViolet);
+  text2->SetTextSize(0.035);
+  text2->DrawLatex(0.15, 0.79, info3.Data());
+  text2->DrawLatex(0.15, 0.75, info2.Data());
+  
+ 
 
   signal_background_c->Print(folder +"signal_background_fit.eps");
   // ------------------------
@@ -151,12 +264,22 @@ void fit_erf()
   // ------------------------
 
   TCanvas *data_c = new TCanvas("data_c","data",10,10,700,900);
+  gPad->SetTickx();
+  gPad->SetTicky();
   data_c->Clear();
   data_c->cd();
+
+  data->SetXTitle("M_{W}^{rec} [GeV/c^{2}]");
+  data->SetYTitle("Events");
+  data->SetTitleSize(0.045);
+  data->GetYaxis()->SetTitleSize(0.045);
+  data->GetYaxis()->SetTitleOffset(1.1);
+  data->SetTitle("");
   data->SetMarkerStyle(20);
   data->SetMarkerSize(1.);
   data->SetLineColor(kBlack);
   data->SetMarkerColor(kBlack);
+  data->GetYaxis()->SetRangeUser(0, 130);
   data->Draw("PZ");
 
   /////////////////////////   Fit function (Data)  ////////////////////////
@@ -191,14 +314,36 @@ void fit_erf()
   bc->SetParameter(2, data_fit->GetParameter(6)); 
  
   bc->SetLineColor(kOrange+2);
-  bc->SetLineStyle(kDashed);
+  bc->SetLineStyle(7);
+  bc->SetLineWidth(4);
   bc->DrawClone("same");
+
+  info = " data events";
+  info2 = "24 GeV < m_{W} < 182 GeV";
+  //  TString info3 = "f(x) = p0 erf #left(#frac{x-p1}{p2}#right)";
+  info3 = "f(x) = sig(x) + bkg(x)";
+  text->SetTextFont(62);
+  text->SetNDC();
+  text->SetTextColor(kBlack);
+  text->SetTextSize(0.035);
+  text->DrawLatex(0.15, 0.83, info.Data());
+ 
+  text2->SetTextFont(62);
+  text2->SetNDC();
+  text2->SetTextColor(kViolet);
+  text2->SetTextSize(0.035);
+  text2->DrawLatex(0.15, 0.79, info3.Data());
+  text2->DrawLatex(0.15, 0.75, info2.Data());
+
+
   data_c->Print(folder +"data_fit.eps");
 
   // ---------------------------------------
   //        Calculate Efficency
   // ---------------------------------------
   TCanvas *MC_Eff_c = new TCanvas("MC_Eff_c","MC Eff curve",10,10,700,900);
+  gPad->SetTickx();
+  gPad->SetTicky();
   MC_Eff_c->Clear();
   MC_Eff_c->cd();
 
@@ -210,7 +355,16 @@ void fit_erf()
   MC_Eff_f->SetParameter(3, signal_background_fit->GetParameter(3));
  
   MC_Eff_f->Draw();
-  MC_Eff_c->Print(folder + "MC_Eff_sig.eps");
+  MC_Eff_f->GetHistogram()->GetXaxis()->SetTitle("M_{W}^{rec} [GeV/c^{2}]");
+  MC_Eff_f->GetHistogram()->SetXTitle("M_{W}^{rec} [GeV/c^{2}]");
+  MC_Eff_f->GetHistogram()->SetYTitle("Events");
+  MC_Eff_f->GetHistogram()->SetTitleSize(0.045);
+  MC_Eff_f->GetHistogram()->GetYaxis()->SetTitleSize(0.045);
+  MC_Eff_f->GetHistogram()->GetYaxis()->SetTitleOffset(1.1);
+  MC_Eff_f->GetHistogram()->SetTitle("signal");
+  MC_Eff_f->Draw("same");
+  MC_Eff_c->Print(folder + "MC_Eff_sig_MC.eps");
+
   TF1 *data_Eff_f =new TF1("data_Eff_f","signal_fit", 24,182);
   //signal
   data_Eff_f->SetParameter(0, data_fit->GetParameter(0));
@@ -238,6 +392,14 @@ void fit_erf()
   cout << "number back_MC_miss "<<number_back_MC_miss <<endl;
   MC_back_f->SetLineColor(kBlue+1);
   MC_back_f->Draw("");
+
+  MC_back_f->GetHistogram()->SetXTitle("M_{W}^{rec} [GeV/c^{2}]");
+  MC_back_f->GetHistogram()->SetYTitle("Events");
+  MC_back_f->GetHistogram()->SetTitleSize(0.045);
+  MC_back_f->GetHistogram()->GetYaxis()->SetTitleSize(0.045);
+  MC_back_f->GetHistogram()->GetYaxis()->SetTitleOffset(1.1);
+  MC_back_f->GetHistogram()->SetTitle("background");
+  MC_back_f->Draw("Same");
   MC_Eff_c->Print(folder + "MC_Eff_bkg_MC.eps");
 
   // integrate background events for tagger and multipy by mistagging rate (Data)
@@ -246,12 +408,24 @@ void fit_erf()
   data_back_f->SetParameter(0, data_fit->GetParameter(4));
   data_back_f->SetParameter(1, data_fit->GetParameter(5));
   data_back_f->SetParameter(2, data_fit->GetParameter(6));
+
   Double_t number_back_data_miss = data_back_f->Integral(24,182) / 2;
- cout << "number back_data_miss "<<number_back_data_miss <<endl;
+  cout << "number back_data_miss "<<number_back_data_miss <<endl;
   data_back_f->SetLineColor(kBlue+1);
   data_back_f->Draw("");
   MC_Eff_c->Print(folder + "MC_Eff_bkg_Data.eps");
 
+//count events in signal histogram
+  Double_t number_sig_before_true=0;  
+  number_sig_before_true =  TTbar_matched->Integral(13,92);
+  Double_t error_sig_before_true;
+  TTbar_matched->IntegralAndError(13,92,error_sig_before_true);
+
+//count events in signal histogram
+  Double_t number_bkg_before_true=0;  
+  number_bkg_before_true =  back->Integral(13,92);
+  Double_t error_bkg_before_true;
+  back->IntegralAndError(13,92,error_bkg_before_true);
 
   // load histograms after tagger
   hist_name = "tagger_zwtag/reco_mass_W";
@@ -283,7 +457,7 @@ void fit_erf()
 
   //count events in signal histogram
   Double_t number_sig=0;  
-  for(int i =0 ; i<TTbar_matched->GetSize();i++){
+  for(int i =13 ; i<92;i++){
     number_sig = number_sig + TTbar_matched->GetBinContent(i);
   }
   cout << "number of sig events after tagger:  " << number_sig <<endl;
@@ -294,7 +468,7 @@ void fit_erf()
 
   //count events in data histogram
   Double_t number_data=0;  
-  for(int i =0 ; i<data_after->GetSize();i++){
+  for(int i =13 ; i<92;i++){
     number_data = number_data + data_after->GetBinContent(i);
   }
   cout << "number of data events after tagger:  " << number_data <<endl;
@@ -305,10 +479,16 @@ void fit_erf()
 
   ofstream myfile;
   myfile.open (folder+"numbers.txt");
-  myfile << "MC number before tagger:   "<< num_MC_before <<endl;
-  myfile<<"Data number before tagger:   "<< num_data_before <<endl;
-  myfile<< "number of sig events after tagger:  " << number_sig+ number_back <<endl;
+  myfile << "MC number before tagger (sig):   "<< num_MC_before <<endl;
+  myfile << "true number of MC sig before tagger   "<< number_sig_before_true<<endl;
+  myfile<<"Data number before tagger (sig):   "<< num_data_before <<endl;
+  myfile << "MC number before tagger (bkg):   "<< number_back_MC_miss <<endl;
+ myfile << "true MC number before tagger (bkg):   "<< number_bkg_before_true <<endl;
+  myfile << "Data number before tagger (bkg):   "<< number_back_data_miss <<endl;
+  myfile<< "number of sig events after tagger:  " << number_sig <<endl;
+  myfile<< "number of all events after tagger:  " << number_sig+ number_back <<endl;
   myfile<< "number of data events after tagger:  " << number_data <<endl;
+
 
  
   //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -449,9 +629,9 @@ void fit_erf()
   cout << "=======================================================================" << endl;
   cout << "Fit with new parameters: " << endl;
   cout << "=======================================================================" << endl << endl << endl;
-
+  TH1D* all2 = (TH1D*)all->Clone();
   TCanvas* cfitnew_MC = new TCanvas("cfitnewMC", "Fit function in new parameters, MC",10,10,700,900);
-  TFitResultPtr fit_result_MC = all->Fit(f_NewParam_MC,"SR");
+  TFitResultPtr fit_result_MC = all2->Fit(f_NewParam_MC,"SR");
   cfitnew_MC->Print("Fit_signal_background_new.eps");
   cout << "Fit in new parameters, MC: " << endl;
   fit_result_MC->Print("V");
@@ -475,7 +655,8 @@ void fit_erf()
   cout << endl << endl << endl << "FIT BY HAND for CHI2 calculation: SIGNAL" << endl << endl << endl;
 
   //smalles chi2 out of the fit before
-  all->Fit(f_NewParam_MC_error,"QR");
+
+  all2->Fit(f_NewParam_MC_error,"QR");
   double chi2_best_MC = f_NewParam_MC_error->GetChisquare();
 
   //set up arrays to save the errors 
@@ -511,7 +692,7 @@ void fit_erf()
       //original double varied_par_MC = -20*pars_MC[j] + pars_MC[j]/1000 * i;
       f_NewParam_MC_error->FixParameter(j,varied_par_MC);
      
-      all->Fit(f_NewParam_MC_error,"QR");
+      all2->Fit(f_NewParam_MC_error,"QR");
 
       double chi2_tmp_MC = f_NewParam_MC_error->GetChisquare();
       chi2_diff_MC = chi2_tmp_MC - chi2_best_MC;
@@ -560,7 +741,7 @@ void fit_erf()
     const char * c_n_MC = s_n_MC.c_str();
     g_chi2_pars_MC[i]->SetMinimum(chi2_best_MC - 1);
     g_chi2_pars_MC[i]->SetMaximum(chi2_best_MC + 10);
-    g_chi2_pars_MC[i]->SetTitle("MC");
+    g_chi2_pars_MC[i]->SetTitle("");
     g_chi2_pars_MC[i]->GetXaxis()->SetTitle(c_n_MC);
     g_chi2_pars_MC[i]->GetXaxis()->SetTitleSize(0.044);
     g_chi2_pars_MC[i]->GetYaxis()->SetTitle("#chi^{2}");
@@ -570,6 +751,8 @@ void fit_erf()
 
   // example of a error calculated parameter by hand
   TCanvas* c_chi2_p1_MC = new TCanvas("c_chi2_p1_MC", "chi2 (p1)_MC", 1);
+  gPad->SetTickx();
+  gPad->SetTicky();
   g_chi2_pars_MC[1]->Draw();
   l_pars_up_MC[1]->Draw("SAME");
   l_pars_dn_MC[1]->Draw("SAME");
@@ -577,6 +760,8 @@ void fit_erf()
   c_chi2_p1_MC->Print(folder + "Chi2_MC_p1.eps");
 
   TCanvas* c_chi2_p0_MC = new TCanvas("c_chi2_p0_MC", "chi2 (p0)_MC", 1);
+  gPad->SetTickx();
+  gPad->SetTicky();
   g_chi2_pars_MC[0]->Draw();
   l_pars_up_MC[0]->Draw("SAME");
   l_pars_dn_MC[0]->Draw("SAME");
@@ -584,6 +769,8 @@ void fit_erf()
   c_chi2_p0_MC->Print(folder + "Chi2_MC_p0.eps");
 
   TCanvas* c_chi2_p2_MC = new TCanvas("c_chi2_p2_MC", "chi2 (p2)_MC", 1);
+  gPad->SetTickx();
+  gPad->SetTicky();
   g_chi2_pars_MC[2]->Draw();
   l_pars_up_MC[2]->Draw("SAME");
   l_pars_dn_MC[2]->Draw("SAME");
@@ -591,6 +778,8 @@ void fit_erf()
   c_chi2_p2_MC->Print(folder + "Chi2_MC_p2.eps");
 
   TCanvas* c_chi2_p3_MC = new TCanvas("c_chi2_p3_MC", "chi2 (p3)_MC", 1);
+  gPad->SetTickx();
+  gPad->SetTicky();
   g_chi2_pars_MC[3]->Draw();
   l_pars_up_MC[3]->Draw("SAME");
   l_pars_dn_MC[3]->Draw("SAME");
@@ -598,6 +787,8 @@ void fit_erf()
   c_chi2_p3_MC->Print(folder + "Chi2_MC_p3.eps");
 
   TCanvas* c_chi2_p4_MC = new TCanvas("c_chi2_p4_MC", "chi2 (p4)_MC", 1);
+  gPad->SetTickx();
+  gPad->SetTicky();
   g_chi2_pars_MC[4]->Draw();
   l_pars_up_MC[4]->Draw("SAME");
   l_pars_dn_MC[4]->Draw("SAME");
@@ -605,6 +796,8 @@ void fit_erf()
   c_chi2_p4_MC->Print(folder + "Chi2_MC_p4.eps");
 
   TCanvas* c_chi2_p5_MC = new TCanvas("c_chi2_p5_MC", "chi2 (p5)_MC", 1);
+  gPad->SetTickx();
+  gPad->SetTicky();
   g_chi2_pars_MC[5]->Draw();
   l_pars_up_MC[5]->Draw("SAME");
   l_pars_dn_MC[5]->Draw("SAME");
@@ -682,58 +875,73 @@ void fit_erf()
   }
 
   TCanvas* cupdnMC = new TCanvas("cupdnMC", "Functions varied up and down, MC",10,10,700,900);
+  gPad->SetTickx();
+  gPad->SetTicky();
+
   leg = new TLegend(0.6,0.4,0.89,0.89);
   leg->SetBorderSize(0);
+
+
+  f_NewParam_MC->GetXaxis()->SetTitle("M_{W}^{rec} [GeV/c^{2}]");
+  f_NewParam_MC->GetYaxis()->SetTitle("Events");
+  f_NewParam_MC->GetXaxis()->SetTitleSize(0.045);
+  f_NewParam_MC->GetYaxis()->SetTitleSize(0.045);
+  f_NewParam_MC->GetYaxis()->SetRangeUser(0,50);
+  f_NewParam_MC->SetTitle("");
+
   f_NewParam_MC->Draw();
-  leg ->AddEntry(f_NewParam_MC,"nomial", "l");
+  leg ->AddEntry(f_NewParam_MC,"nominal", "l");
+
 
   f_NewParam_MC_up1->SetLineColor(3);
   f_NewParam_MC_up1->Draw("SAME");
-  leg ->AddEntry(f_NewParam_MC_up1,"up1", "l");
+  leg ->AddEntry(f_NewParam_MC_up1,"Par. 1 up", "l");
   
   f_NewParam_MC_dn1->SetLineColor(4);
   f_NewParam_MC_dn1->Draw("SAME");
-  leg ->AddEntry(f_NewParam_MC_dn1,"down1", "l");
+  leg ->AddEntry(f_NewParam_MC_dn1,"Par. 1 down", "l");
 
   f_NewParam_MC_up2->SetLineColor(5);
   f_NewParam_MC_up2->Draw("SAME");
-  leg ->AddEntry(f_NewParam_MC_up2,"up2", "l");
+  leg ->AddEntry(f_NewParam_MC_up2,"Par. 2 up", "l");
 
   f_NewParam_MC_dn2->SetLineColor(6);
   f_NewParam_MC_dn2->Draw("SAME");
-  leg ->AddEntry(f_NewParam_MC_dn2,"down2", "l");
+  leg ->AddEntry(f_NewParam_MC_dn2,"Par. 2 down", "l");
 
   f_NewParam_MC_up3->SetLineColor(7);
   f_NewParam_MC_up3->Draw("SAME");
-  leg ->AddEntry(f_NewParam_MC_up3,"up3", "l");
+  leg ->AddEntry(f_NewParam_MC_up3,"Par. 3 up", "l");
 
   f_NewParam_MC_dn3->SetLineColor(8);
   f_NewParam_MC_dn3->Draw("SAME");
-  leg ->AddEntry(f_NewParam_MC_dn3,"down3", "l");
+  leg ->AddEntry(f_NewParam_MC_dn3,"Par. 3 down", "l");
 
   f_NewParam_MC_up4->SetLineColor(9);
   f_NewParam_MC_up4->Draw("SAME");
-  leg ->AddEntry(f_NewParam_MC_up4,"up4", "l");
+  leg ->AddEntry(f_NewParam_MC_up4,"Par. 4 up", "l");
 
-  f_NewParam_MC_dn4->SetLineColor(10);
+  f_NewParam_MC_dn4->SetLineColor(15);
   f_NewParam_MC_dn4->Draw("SAME");
-  leg ->AddEntry(f_NewParam_MC_dn4,"down4", "l");
+  leg ->AddEntry(f_NewParam_MC_dn4,"Par. 4 down", "l");
 
   f_NewParam_MC_up5->SetLineColor(11);
   f_NewParam_MC_up5->Draw("SAME");
-  leg ->AddEntry(f_NewParam_MC_up5,"up5", "l");
+  leg ->AddEntry(f_NewParam_MC_up5,"Par. 5 up", "l");
 
   f_NewParam_MC_dn5->SetLineColor(12);
   f_NewParam_MC_dn5->Draw("SAME");
-  leg ->AddEntry(f_NewParam_MC_dn5,"down5", "l");
+  leg ->AddEntry(f_NewParam_MC_dn5,"Par. 5 down", "l");
 
   f_NewParam_MC_up6->SetLineColor(40);
   f_NewParam_MC_up6->Draw("SAME");
-  leg ->AddEntry(f_NewParam_MC_up6,"up6", "l");
+  leg ->AddEntry(f_NewParam_MC_up6,"Par. 6 up", "l");
 
   f_NewParam_MC_dn6->SetLineColor(42);
   f_NewParam_MC_dn6->Draw("SAME");
-  leg ->AddEntry(f_NewParam_MC_up6,"up6", "l");
+  leg ->AddEntry(f_NewParam_MC_dn6,"Par. 6 down", "l");
+
+
 
   leg->Draw("SAME");
   cupdnMC->Print(folder + "variations_MC.eps");
@@ -1032,13 +1240,21 @@ void fit_erf()
   myfile << "all down variations quadraticly added: -"<<TMath::Sqrt(all_down)<<endl;
 
   // read in histogramm from mistag rate depending on nominal,up,down and correction
-
-
+  TFile* file = new TFile(mistag_folder+"QCD_"+unc_name+".root", "READ");
+  if(unc_name.Contains("btag"))file = new TFile(mistag_folder+"QCD_"+"none"+".root", "READ");
+  if(unc_name.Contains("sub"))file = new TFile(mistag_folder+"QCD_"+"none"+".root", "READ");
+  TH1F* sf_hist = (TH1F*) file->Get("tot_eff_h");
+  Double_t sf = sf_hist->GetBinContent(1);
+  
+  TFile* file2 = new TFile(mistag_folder+"QCD_none.root", "READ");
+  TH1F* error_hist = (TH1F*) file2->Get("tot_err_h");
+  Double_t error_sf = error_hist->GetBinContent(1);
+ 
 
   //define mistag rate and error
-  Double_t corr_mistagrate = 1.067;
-  Double_t error_corr_mistagrate_up = TMath::Sqrt(TMath::Power(0.00935,2));
-  Double_t error_corr_mistagrate_down = TMath::Sqrt(TMath::Power(0.00935,2));
+  Double_t corr_mistagrate = sf;
+  Double_t error_corr_mistagrate_up = TMath::Sqrt(TMath::Power(error_sf,2));
+  Double_t error_corr_mistagrate_down = TMath::Sqrt(TMath::Power(error_sf,2));
   Double_t mistag_rate_MC = number_back/number_back_MC_miss;
   Double_t mistag_rate_data = mistag_rate_MC * corr_mistagrate;
   Double_t error_mistagrate_MC_up = TMath::Sqrt(TMath::Power((1/number_back_MC_miss)*error_back,2) + TMath::Power((number_back/number_back_MC_miss/number_back_MC_miss)*TMath::Sqrt(all_up),2) );
@@ -1330,7 +1546,7 @@ void fit_erf()
     const char * c_n_data = s_n_data.c_str();
     g_chi2_pars_data[i]->SetMinimum(chi2_best_data - 1);
     g_chi2_pars_data[i]->SetMaximum(chi2_best_data + 10);
-    g_chi2_pars_data[i]->SetTitle("data");
+    g_chi2_pars_data[i]->SetTitle("");
     g_chi2_pars_data[i]->GetXaxis()->SetTitle(c_n_data);
     g_chi2_pars_data[i]->GetXaxis()->SetTitleSize(0.044);
     g_chi2_pars_data[i]->GetYaxis()->SetTitle("#chi^{2}");
@@ -1340,6 +1556,8 @@ void fit_erf()
 
   // example of a error calculated parameter by hand
   TCanvas* c_chi2_p1_data = new TCanvas("c_chi2_p1_data", "chi2 (p1)_data", 1);
+  gPad->SetTickx();
+  gPad->SetTicky();
   g_chi2_pars_data[1]->Draw();
   l_pars_up_data[1]->Draw("SAME");
   l_pars_dn_data[1]->Draw("SAME");
@@ -1347,6 +1565,8 @@ void fit_erf()
   c_chi2_p1_data->Print(folder + "Chi2_data_p1.eps");
 
   TCanvas* c_chi2_p0_data = new TCanvas("c_chi2_p0_data", "chi2 (p0)_data", 1);
+  gPad->SetTickx();
+  gPad->SetTicky();
   g_chi2_pars_data[0]->Draw();
   l_pars_up_data[0]->Draw("SAME");
   l_pars_dn_data[0]->Draw("SAME");
@@ -1354,6 +1574,8 @@ void fit_erf()
   c_chi2_p0_data->Print(folder + "Chi2_data_p0.eps");
 
   TCanvas* c_chi2_p2_data = new TCanvas("c_chi2_p2_data", "chi2 (p2)_data", 1);
+  gPad->SetTickx();
+  gPad->SetTicky();
   g_chi2_pars_data[2]->Draw();
   l_pars_up_data[2]->Draw("SAME");
   l_pars_dn_data[2]->Draw("SAME");
@@ -1361,6 +1583,8 @@ void fit_erf()
   c_chi2_p2_data->Print(folder + "Chi2_data_p2.eps");
 
   TCanvas* c_chi2_p3_data = new TCanvas("c_chi2_p3_data", "chi2 (p3)_data", 1);
+  gPad->SetTickx();
+  gPad->SetTicky();
   g_chi2_pars_data[3]->Draw();
   l_pars_up_data[3]->Draw("SAME");
   l_pars_dn_data[3]->Draw("SAME");
@@ -1368,6 +1592,8 @@ void fit_erf()
   c_chi2_p3_data->Print(folder + "Chi2_data_p3.eps");
 
   TCanvas* c_chi2_p4_data = new TCanvas("c_chi2_p4_data", "chi2 (p4)_data", 1);
+  gPad->SetTickx();
+  gPad->SetTicky();
   g_chi2_pars_data[4]->Draw();
   l_pars_up_data[4]->Draw("SAME");
   l_pars_dn_data[4]->Draw("SAME");
@@ -1375,6 +1601,8 @@ void fit_erf()
   c_chi2_p4_data->Print(folder + "Chi2_data_p4.eps");
 
   TCanvas* c_chi2_p5_data = new TCanvas("c_chi2_p5_data", "chi2 (p5)_data", 1);
+  gPad->SetTickx();
+  gPad->SetTicky();
   g_chi2_pars_data[5]->Draw();
   l_pars_up_data[5]->Draw("SAME");
   l_pars_dn_data[5]->Draw("SAME");
@@ -1451,59 +1679,71 @@ void fit_erf()
   }
 
   TCanvas* cupdndata = new TCanvas("cupdndata", "Functions varied up and down, data",10,10,700,900);
+  gPad->SetTickx();
+  gPad->SetTicky();
+
   leg = new TLegend(0.6,0.4,0.89,0.89);
   leg->SetBorderSize(0);
-  f_NewParam_data->GetYaxis()->SetRangeUser(0, 60);
+  
+  f_NewParam_data->GetXaxis()->SetTitle("M_{W}^{rec} [GeV/c^{2}]");
+  f_NewParam_data->GetYaxis()->SetTitle("Events");
+  f_NewParam_data->GetXaxis()->SetTitleSize(0.045);
+  f_NewParam_data->GetYaxis()->SetTitleSize(0.045);
+  f_NewParam_data->GetYaxis()->SetRangeUser(0,50);
+  f_NewParam_data->SetTitle("");
+
+
+  // f_NewParam_data->GetYaxis()->SetRangeUser(0, 60);
   f_NewParam_data->Draw();
-  leg -> AddEntry(f_NewParam_data,"nomial", "l");
+  leg -> AddEntry(f_NewParam_data,"nominal", "l");
 
   f_NewParam_data_up1->SetLineColor(3);
   f_NewParam_data_up1->Draw("SAME");
-  leg -> AddEntry(f_NewParam_data_up1,"up1", "l");
+  leg -> AddEntry(f_NewParam_data_up1,"Par. 1 up", "l");
 
   f_NewParam_data_dn1->SetLineColor(4);
   f_NewParam_data_dn1->Draw("SAME");
-  leg -> AddEntry(f_NewParam_data_dn1,"down1", "l");
+  leg -> AddEntry(f_NewParam_data_dn1,"Par. 1 down", "l");
 
   f_NewParam_data_up2->SetLineColor(5);
   f_NewParam_data_up2->Draw("SAME");
-  leg -> AddEntry(f_NewParam_data_up2,"up2", "l");
+  leg -> AddEntry(f_NewParam_data_up2,"Par. 2 up", "l");
 
   f_NewParam_data_dn2->SetLineColor(6);
   f_NewParam_data_dn2->Draw("SAME");
-  leg -> AddEntry(f_NewParam_data_dn2,"down2", "l");
+  leg -> AddEntry(f_NewParam_data_dn2,"Par. 2 down", "l");
 
   f_NewParam_data_up3->SetLineColor(7);
   f_NewParam_data_up3->Draw("SAME");
-  leg -> AddEntry(f_NewParam_data_up3,"up3", "l");
+  leg -> AddEntry(f_NewParam_data_up3,"Par. 3 up", "l");
 
   f_NewParam_data_dn3->SetLineColor(8);
   f_NewParam_data_dn3->Draw("SAME");
-  leg -> AddEntry(f_NewParam_data_dn3,"down3", "l");
+  leg -> AddEntry(f_NewParam_data_dn3,"Par. 3 down", "l");
 
   f_NewParam_data_up4->SetLineColor(9);
   f_NewParam_data_up4->Draw("SAME");
-  leg -> AddEntry(f_NewParam_data_up4,"up4", "l");
+  leg -> AddEntry(f_NewParam_data_up4,"Par. 4 up", "l");
 
-  f_NewParam_data_dn4->SetLineColor(10);
+  f_NewParam_data_dn4->SetLineColor(15);
   f_NewParam_data_dn4->Draw("SAME"); 
-  leg -> AddEntry(f_NewParam_data_dn4,"down4", "l");
+  leg -> AddEntry(f_NewParam_data_dn4,"Par. 4 down", "l");
 
   f_NewParam_data_up5->SetLineColor(11);
   f_NewParam_data_up5->Draw("SAME");
-  leg -> AddEntry(f_NewParam_data_up5,"up5", "l");
+  leg -> AddEntry(f_NewParam_data_up5,"Par. 5 up", "l");
 
   f_NewParam_data_dn5->SetLineColor(12);
   f_NewParam_data_dn5->Draw("SAME");
-  leg -> AddEntry(f_NewParam_data_dn5,"down5", "l");
+  leg -> AddEntry(f_NewParam_data_dn5,"Par. 5 down", "l");
 
   f_NewParam_data_up6->SetLineColor(40);
   f_NewParam_data_up6->Draw("SAME");
-  leg -> AddEntry(f_NewParam_data_up6,"up6", "l");
+  leg -> AddEntry(f_NewParam_data_up6,"Par. 6 up", "l");
 
   f_NewParam_data_dn6->SetLineColor(42);
   f_NewParam_data_dn6->Draw("SAME");
-  leg -> AddEntry(f_NewParam_data_dn6,"down6", "l");
+  leg -> AddEntry(f_NewParam_data_dn6,"Par. 6 down", "l");
 
   leg->Draw("SAME");
   // f_NewParam_data_up7->SetLineColor(32);
@@ -1800,51 +2040,83 @@ void fit_erf()
   myfile << "----------------------------------------------------------------------------------------------------------"<<endl;
   myfile << "                                             Final result                                                 "<<endl;
   myfile << "----------------------------------------------------------------------------------------------------------"<<endl;
- 
+  
   // Double_t error_MC_after_up
   // Double_t error_MC_after_down 
   // Double_t error_data_after_up 
   // Double_t error_data_after_down 
   // cout << "error MC_up after:  "<< error_MC_after_up <<" - error MC up before: "<<(error_MC_before_up/num_MC_before) << endl;
   //cout << "error MC_down after:  "<< error_MC_after_down <<" - error MC down before: "<<(error_MC_before_down/num_MC_before) << endl;
-
-
+  
+  
   Double_t error_MC_up = TMath::Sqrt((1/TMath::Power(num_MC_before,2)) *error_MC_after_up *error_MC_after_up + TMath::Power(num_MC_after/num_MC_before/num_MC_before,2) * error_MC_before_up * error_MC_before_up );
- Double_t error_MC_down = TMath::Sqrt((1/TMath::Power(num_MC_before,2)) *error_MC_after_down *error_MC_after_down + TMath::Power(num_MC_after/num_MC_before/num_MC_before,2) * error_MC_before_down * error_MC_before_down );
- Double_t error_data_up = TMath::Sqrt((1/TMath::Power(num_data_before,2)) *error_data_after_up *error_data_after_up + TMath::Power(num_data_after/num_data_before/num_data_before,2) * error_data_before_up * error_data_before_up );
- Double_t error_data_down = TMath::Sqrt((1/TMath::Power(num_data_before,2)) *error_data_after_down *error_data_after_down + TMath::Power(num_data_after/num_data_before/num_data_before,2) * error_data_before_down * error_data_before_down );
-
+  Double_t error_MC_down = TMath::Sqrt((1/TMath::Power(num_MC_before,2)) *error_MC_after_down *error_MC_after_down + TMath::Power(num_MC_after/num_MC_before/num_MC_before,2) * error_MC_before_down * error_MC_before_down );
+  Double_t error_data_up = TMath::Sqrt((1/TMath::Power(num_data_before,2)) *error_data_after_up *error_data_after_up + TMath::Power(num_data_after/num_data_before/num_data_before,2) * error_data_before_up * error_data_before_up );
+  Double_t error_data_down = TMath::Sqrt((1/TMath::Power(num_data_before,2)) *error_data_after_down *error_data_after_down + TMath::Power(num_data_after/num_data_before/num_data_before,2) * error_data_before_down * error_data_before_down );
+  
  
- 
- myfile<< "eff MC " << num_MC_after/num_MC_before <<" + "<< error_MC_up/(num_MC_after/num_MC_before) << " - " << error_MC_down/(num_MC_after/num_MC_before) <<endl;
- myfile<< "eff data " << num_data_after/num_data_before <<" + "<< error_data_up/(num_data_after/num_data_before) << " - " << error_data_down/(num_data_after/num_data_before)<<endl;
- myfile<<"-----------------------------------------------------------------------"<<endl;
-  myfile << "error MC up: error MC after "<< (1/TMath::Power(num_MC_before,2)) *error_MC_after_up *error_MC_after_up<<" +error MC before "<< TMath::Power(num_MC_after/num_MC_before/num_MC_before,2) * error_MC_before_up * error_MC_before_up <<endl;
-
-  myfile << "error MC after: error sig after "<<TMath::Power(error_sig,2)<<" + error back after "<< TMath::Power(error_back,2) <<" + error back before * mistag rate "<< TMath::Power((TMath::Sqrt(all_up)*mistag_rate_MC),2) <<" + error misstag rate "<< TMath::Power(number_back_MC_miss * error_mistagrate_MC_up ,2)<<endl;
-
-
- myfile << "error MC down: error MC after "<< (1/TMath::Power(num_MC_before,2)) *error_MC_after_down *error_MC_after_down<<" +error MC before "<< TMath::Power(num_MC_after/num_MC_before/num_MC_before,2) * error_MC_before_down * error_MC_before_down <<endl;
-
-  myfile << "error MC after: error sig after "<<TMath::Power(error_sig,2)<<" + error back after "<< TMath::Power(error_back,2) <<" + error back before * mistag rate "<< TMath::Power((TMath::Sqrt(all_down)*mistag_rate_MC),2) <<" + error misstag rate "<< TMath::Power(number_back_MC_miss * error_mistagrate_MC_down ,2)<<endl;
-
+  
+  myfile<< "eff MC " << num_MC_after/num_MC_before <<" + "<< error_MC_up/(num_MC_after/num_MC_before) << " - " << error_MC_down/(num_MC_after/num_MC_before) <<endl;
+  myfile<< "eff data " << num_data_after/num_data_before <<" + "<< error_data_up/(num_data_after/num_data_before) << " - " << error_data_down/(num_data_after/num_data_before)<<endl;
   myfile<<"-----------------------------------------------------------------------"<<endl;
-
-
+  myfile << "error MC up: error MC after "<< (1/TMath::Power(num_MC_before,2)) *error_MC_after_up *error_MC_after_up<<" +error MC before "<< TMath::Power(num_MC_after/num_MC_before/num_MC_before,2) * error_MC_before_up * error_MC_before_up <<endl;
+  
+  myfile << "error MC after: error sig after "<<TMath::Power(error_sig,2)<<" + error back after "<< TMath::Power(error_back,2) <<" + error back before * mistag rate "<< TMath::Power((TMath::Sqrt(all_up)*mistag_rate_MC),2) <<" + error misstag rate "<< TMath::Power(number_back_MC_miss * error_mistagrate_MC_up ,2)<<endl;
+  
+  
+  myfile << "error MC down: error MC after "<< (1/TMath::Power(num_MC_before,2)) *error_MC_after_down *error_MC_after_down<<" +error MC before "<< TMath::Power(num_MC_after/num_MC_before/num_MC_before,2) * error_MC_before_down * error_MC_before_down <<endl;
+  
+  myfile << "error MC after: error sig after "<<TMath::Power(error_sig,2)<<" + error back after "<< TMath::Power(error_back,2) <<" + error back before * mistag rate "<< TMath::Power((TMath::Sqrt(all_down)*mistag_rate_MC),2) <<" + error misstag rate "<< TMath::Power(number_back_MC_miss * error_mistagrate_MC_down ,2)<<endl;
+  
+  myfile<<"-----------------------------------------------------------------------"<<endl;
+  
+  
   myfile << "error data up: error data after "<< (1/TMath::Power(num_data_before,2)) *error_data_after_up *error_data_after_up<<" +error data before "<< TMath::Power(num_data_after/num_data_before/num_data_before,2) * error_data_before_up * error_data_before_up <<endl;
-
+  
   myfile << "error data after: error sig after "<<TMath::Power(error_sig,2)<<" + error back after "<< TMath::Power(error_back,2) <<" + error back before * mistag rate "<< TMath::Power((TMath::Sqrt(all_up)*mistag_rate_data),2) <<" + error misstag rate "<< TMath::Power(number_back_data_miss * error_mistagrate_data_up ,2)<<endl;
-
-
- myfile << "error data down: error data after "<< (1/TMath::Power(num_data_before,2)) *error_data_after_down *error_data_after_down<<" +error data before "<< TMath::Power(num_data_after/num_data_before/num_data_before,2) * error_data_before_down * error_data_before_down <<endl;
-
+  
+  
+  myfile << "error data down: error data after "<< (1/TMath::Power(num_data_before,2)) *error_data_after_down *error_data_after_down<<" +error data before "<< TMath::Power(num_data_after/num_data_before/num_data_before,2) * error_data_before_down * error_data_before_down <<endl;
+  
   myfile << "error data after: error sig after "<<TMath::Power(error_sig,2)<<" + error back after "<< TMath::Power(error_back,2) <<" + error back before * mistag rate "<< TMath::Power((TMath::Sqrt(all_down)*mistag_rate_data),2) <<" + error misstag rate "<< TMath::Power(number_back_data_miss * error_mistagrate_data_down ,2)<<endl;
+  
 
+  
 
+  
 
+  //write eff in hists: for none also errors
+  
+  TFile *g= new TFile(unc_folder +"Eff_"+unc_name+".root","RECREATE");
+  TH1F *tot_eff_h = new TH1F("tot_eff_h","tot eff",1,1,2);
+  //SF for eff
+  Double_t sf_eff = (num_data_after/num_data_before)/(num_MC_after/num_MC_before);
+  cout << "sf_eff "<< sf_eff << endl;
+  tot_eff_h->Fill(1,sf_eff);
+  tot_eff_h->Write();
+  if(unc_name == "none"){
+    TH1F *tot_err_up_h = new TH1F("tot_err_up_h","tot error",1,1,2);
+    Double_t sf_eff_err_up = TMath::Sqrt(TMath::Power((1/(num_MC_after/num_MC_before)) * error_data_up/(num_data_after/num_data_before),2) +TMath::Power(sf_eff/(num_MC_after/num_MC_before) *  error_MC_up/(num_MC_after/num_MC_before)  ,2) );
+    tot_err_up_h->Fill(1,sf_eff_err_up);
+    tot_err_up_h->Write();
 
+    TH1F *tot_err_down_h = new TH1F("tot_err_down_h","tot error",1,1,2);
+    Double_t sf_eff_err_down =  TMath::Sqrt(TMath::Power((1/(num_MC_after/num_MC_before)) * error_data_down/(num_data_after/num_data_before),2) +TMath::Power(sf_eff/(num_MC_after/num_MC_before) *  error_MC_down/(num_MC_after/num_MC_before)  ,2) );
+    tot_err_down_h->Fill(1,sf_eff_err_down);
+    tot_err_down_h->Write();
+
+    myfile<<"sf_eff_err_up  "<<sf_eff_err_up<<endl;
+    myfile<<"sf_eff_err_down  "<<sf_eff_err_down<<endl;
+  }
+  g->Close();
+
+  myfile<< "sf_eff "<< sf_eff << endl;
+ 
 
   myfile.close();
+
+
+
 }//End of function
 
 
