@@ -1,4 +1,4 @@
-model = build_model_from_rootfile('/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/Sideband_Data/theta_histograms_background_MZPrime.root',include_mc_uncertainties = True)
+model = build_model_from_rootfile('/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/sidebands/theta_histograms_background_MZPrime.root',include_mc_uncertainties = True)
 model.fill_histogram_zerobins()
 model.set_signal_processes('MC_ZPrime*')
 model.add_lognormal_uncertainty('wj_rate', math.log(1.5), 'WJets')
@@ -10,7 +10,7 @@ model.add_lognormal_uncertainty('ttbar_rate', math.log(1.5), 'TTbar')
 
 
 options = Options()
-options.set('minimizer', 'strategy', 'newton_vanilla')
+#options.set('minimizer', 'strategy', 'newton_vanilla')
 
 #sig_a = ['MC_ZPrime1500ToTPrime1200T_TPrimeToHT','MC_ZPrime2000ToTPrime1200T_TPrimeToHT','MC_ZPrime2500ToTPrime1200T_TPrimeToHT']
 #sig = 'MC_ZPrime'

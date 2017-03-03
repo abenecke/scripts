@@ -1,4 +1,4 @@
-model = build_model_from_rootfile('/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/muonpt/50/theta_histograms_MZPrime.root',include_mc_uncertainties = True)
+model = build_model_from_rootfile('/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/one_subjet_btag/theta_histograms_MZPrime.root',include_mc_uncertainties = True)
 model.fill_histogram_zerobins()
 model.set_signal_processes('MC_ZPrime*')
 model.add_lognormal_uncertainty('wj_rate', math.log(1.5), 'WJets')

@@ -18,7 +18,7 @@ void BackgroundNames_HT()
 
   
   for(int j=0; j<Nsyst; ++j){
-    TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/Sideband_Data";
+    TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/sidebands";
     if(systname[j]!="default"){
       directory += systname[j];
       directory +="_";
@@ -26,7 +26,7 @@ void BackgroundNames_HT()
     }
     std::cout<< directory <<std::endl;
 
-    TString outfilename = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/Sideband_Data/theta_histograms_background_MZPrime";
+    TString outfilename = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/sidebands/theta_histograms_background_MZPrime";
     if(systname[j]!="default"){
       outfilename += systname[j];
       outfilename +="_";
