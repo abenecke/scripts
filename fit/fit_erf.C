@@ -6,12 +6,12 @@ using namespace std;
 void fit_erf()
 {
   
-  bool b_error=false;
+  bool b_error=true;
   TString unc_name = "none"; // "jersmear_up" , "jersmear_down" ,"jecsmear_up" , "jecsmear_down" , "none"
   TString mistag_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/mass/hists/";
-  TString folder ="erf/test_";
+  TString folder ="erf/data2016_";
   // TString folder ="~/ownCloud/masterarbeit/tex/plots/efficiency/master_";
-  TString unc_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/eff/hists/";
+  TString unc_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/efficiency/hists";
 
 
   //setOptFit( pcev (default = 0111)) Probability; Chisquare/Number of degrees of freedom; errors ;values of parameters 
@@ -19,7 +19,7 @@ void fit_erf()
   gStyle->SetOptStat(0);
 
   //All files are read in
-  TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/eff/"+unc_name;
+  TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/efficiency/"+unc_name;
   TString bkgfolder = "";
   TFile * data_f = new TFile(directory+"/uhh2.AnalysisModuleRunner.Data.Data.root", "READ");
   TFile * TTbar_matched_f = new TFile(directory+"/uhh2.AnalysisModuleRunner.MC.TTbar_right.root", "READ");
@@ -59,7 +59,7 @@ void fit_erf()
   TTbar_unmatched->SetMarkerSize(1.);
   TTbar_unmatched->SetLineColor(kBlue+1);
   TTbar_unmatched->SetMarkerColor(kBlue+1);
-  TTbar_unmatched->GetYaxis()->SetRangeUser(130, 60);
+  TTbar_unmatched->GetYaxis()->SetRangeUser(0, 800);
   TTbar_unmatched->Draw("E1");
 
 
@@ -78,7 +78,7 @@ void fit_erf()
   // background_fit->SetLineStyle(kDashed);
   background_fit->SetLineStyle(7);
   background_fit->SetLineWidth(5);
- 
+  back->GetYaxis()->SetRangeUser(0, 800);
 
 
   back->Draw("PZ");
@@ -128,11 +128,11 @@ void fit_erf()
   TTbar_matched->SetMarkerSize(1.);
   TTbar_matched->SetLineColor(kRed);
   TTbar_matched->SetMarkerColor(kRed);
-  TTbar_matched ->GetYaxis()->SetRangeUser(0, 65);
+  TTbar_matched ->GetYaxis()->SetRangeUser(0, 550);
   TTbar_matched->Draw("PZ");
 
   /////////////////////////   Fit function (Signal)  ////////////////////////
-  TF1 *signal_fit = new TF1("signal_fit","TMath::Voigt(x-[2], [0], [1], 4)*[3]", 65, 115);
+  TF1 *signal_fit = new TF1("signal_fit","TMath::Voigt(x-[2], [0], [1], 4)*[3]", 70, 120);
   signal_fit->SetParameter(0, 10);
   signal_fit->FixParameter(1, 2.09);
   signal_fit->SetParameter(2, 92);
@@ -192,7 +192,7 @@ void fit_erf()
   all->GetYaxis()->SetTitleSize(0.045);
   all->GetYaxis()->SetTitleOffset(1.1);
   all->SetTitle("");
-  all->GetYaxis()->SetRangeUser(0, 130);
+  all->GetYaxis()->SetRangeUser(0, 1200);
   all->SetMarkerStyle(24);
   all->SetMarkerColor(kBlack);
   all->SetLineColor(kBlack);
@@ -279,7 +279,7 @@ void fit_erf()
   data->SetMarkerSize(1.);
   data->SetLineColor(kBlack);
   data->SetMarkerColor(kBlack);
-  data->GetYaxis()->SetRangeUser(0, 130);
+  data->GetYaxis()->SetRangeUser(0, 1200);
   data->Draw("PZ");
 
   /////////////////////////   Fit function (Data)  ////////////////////////
@@ -681,10 +681,10 @@ void fit_erf()
     for(int i=0; i<50000; i++){
       for_percent++;
       varied_par_MC_old = varied_par_MC;
-      if(j==0)  varied_par_MC = (pars_MC[j]-20) + pars_MC[j]/1000000 * i;
+      if(j==0)  varied_par_MC = (pars_MC[j]-160) + pars_MC[j]/1000000 * i;
       if(j==1)  varied_par_MC = (pars_MC[j]-5) + pars_MC[j]/100000 * i;
-      if(j==2)  varied_par_MC = (pars_MC[j]-2) + pars_MC[j]/1000000 * i;
-      if(j==3)  varied_par_MC = (pars_MC[j]-2) + pars_MC[j]/1000000 * i;
+      if(j==2)  varied_par_MC = (pars_MC[j]+2) + pars_MC[j]/1000000 * i;
+      if(j==3)  varied_par_MC = (pars_MC[j]+2) + pars_MC[j]/1000000 * i;
       if(j==4)  varied_par_MC = (pars_MC[j]-2) + pars_MC[j]/1000000 * i;
       if(j==5)  varied_par_MC = (pars_MC[j]-10) + pars_MC[j]/10000 * i;
       if(j==6)  varied_par_MC = (pars_MC[j]-10) + pars_MC[j]/10000 * i;
@@ -886,7 +886,7 @@ void fit_erf()
   f_NewParam_MC->GetYaxis()->SetTitle("Events");
   f_NewParam_MC->GetXaxis()->SetTitleSize(0.045);
   f_NewParam_MC->GetYaxis()->SetTitleSize(0.045);
-  f_NewParam_MC->GetYaxis()->SetRangeUser(0,50);
+  // f_NewParam_MC->GetYaxis()->SetRangeUser(0,50);
   f_NewParam_MC->SetTitle("");
 
   f_NewParam_MC->Draw();
@@ -1475,12 +1475,12 @@ void fit_erf()
     for(int i=0; i<50000; i++){
       for_percent++;
       varied_par_data_old = varied_par_data;
-      if(j==0)  varied_par_data = (pars_data[j]-80) + pars_data[j]/100000 * i;
+      if(j==0)  varied_par_data = (pars_data[j]-800) + pars_data[j]/100000 * i;
       if(j==1)  varied_par_data = (pars_data[j]-80) + pars_data[j]/100000 * i;
-      if(j==2)  varied_par_data = (pars_data[j]-20) + pars_data[j]/100000 * i;
+      if(j==2)  varied_par_data = (pars_data[j]-20) - pars_data[j]/100000 * i;
       if(j==3)  varied_par_data = (pars_data[j]-2) - pars_data[j]/1000000 * i;
-      if(j==4)  varied_par_data = (pars_data[j]-10) + pars_data[j]/100000 * i;
-      if(j==5)  varied_par_data = (pars_data[j]-10) - pars_data[j]/10000 * i;
+      if(j==4)  varied_par_data = (pars_data[j]-10) - pars_data[j]/100000 * i;
+      if(j==5)  varied_par_data = (pars_data[j]-10) + pars_data[j]/100000 * i;
       if(j==6)  varied_par_data = (pars_data[j]-10) + pars_data[j]/10000 * i;
 
       // if(j==0)  varied_par_data = (pars_data[j]-40) + pars_data[j]/1000000 * i;
@@ -1501,8 +1501,8 @@ void fit_erf()
       double chi2_tmp_data = f_NewParam_data_error->GetChisquare();
       chi2_diff_data = chi2_tmp_data - chi2_best_data;
 
-      if(i%500 == 0) cout << "\r"  << for_percent/3500  << "%, " <<  "Parameter " << j << ", Fit No. " << i  << ", current chi2: " << chi2_tmp_data << " at current parametervalue: " << varied_par_data << "           "  << flush;
-      // if(i%500 == 0) cout << "\r"  << for_percent/3500  << "%, " <<  "Parameter " << j << ", Fit No. " << i  << ", current chi2: " << chi2_tmp_data << " at current parametervalue: " << varied_par_data << "           "  << endl;
+      //  if(i%500 == 0) cout << "\r"  << for_percent/3500  << "%, " <<  "Parameter " << j << ", Fit No. " << i  << ", current chi2: " << chi2_tmp_data << " at current parametervalue: " << varied_par_data << "           "  << flush;
+      if(i%500 == 0) if(j==5)cout << "\r"  << for_percent/3500  << "%, " <<  "Parameter " << j << ", Fit No. " << i  << ", current chi2: " << chi2_tmp_data << " at current parametervalue: " << varied_par_data << "           "  << endl;
 
 
       if(!pars_dn_set_data[j] && chi2_diff_data < 1) {
@@ -1689,7 +1689,7 @@ void fit_erf()
   f_NewParam_data->GetYaxis()->SetTitle("Events");
   f_NewParam_data->GetXaxis()->SetTitleSize(0.045);
   f_NewParam_data->GetYaxis()->SetTitleSize(0.045);
-  f_NewParam_data->GetYaxis()->SetRangeUser(0,50);
+  // f_NewParam_data->GetYaxis()->SetRangeUser(0,50);
   f_NewParam_data->SetTitle("");
 
 
