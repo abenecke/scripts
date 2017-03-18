@@ -208,11 +208,11 @@ void limit()
 
 
   double ZT_data2016_noH1[3]={0.289,0.0932,0.0522};
-  double ZT_data2016_all[3]={0.289,0.0932,0.0522};
+  double ZT_data2016_all[3]={0.231,0.0795,0.0452};
 
 
   double WB_data2016_noH1[3]={1.27,0.483,0.257};
-  double WB_data2016_all[3]={1.27,0.483,0.257};
+  double WB_data2016_all[3]={0.963,0.376,0.218};
 
  // double observed[17] = {20,2.97,0.399,0.181,0.0684,0.0378,0.0256,0.0198,0.0149,0.0131,0.0127,0.0107,0.00962,0.00909,0.00848,0.00831,0.00788};
   double low_95[5] = {0,0.506,0.226,0.143	,0};
@@ -275,22 +275,22 @@ void limit()
  // g_observed->SetLineWidth(3);
  g_central->SetFillColor(0);
  g_central->SetLineStyle(2);
- g_central->SetLineColor(kBlack);
+ g_central->SetLineColor(kGreen);
  g_central->SetLineWidth(2);
 
 g_central1->SetFillColor(0);
  g_central1->SetLineStyle(2);
- g_central1->SetLineColor(kRed);
+ g_central1->SetLineColor(kBlue);
  g_central1->SetLineWidth(2);
 
  g_central2->SetFillColor(0);
  g_central2->SetLineStyle(2);
- g_central2->SetLineColor(kGreen);
+ g_central2->SetLineColor(kRed);
  g_central2->SetLineWidth(2);
 
  g_central3->SetFillColor(0);
- g_central3->SetLineStyle(2);
- g_central3->SetLineColor(kMagenta);
+ // g_central3->SetLineStyle(2);
+ g_central3->SetLineColor(kBlack);
  g_central3->SetLineWidth(2);
 
 
@@ -315,13 +315,13 @@ g_central1->SetFillColor(0);
 
  TCanvas * c = new TCanvas("c", "c", 800,600);
   c->SetLogy();
- g_up_95_dummy->SetMinimum(0.05);
+  // g_up_95_dummy->SetMinimum(0.05);
  //g_up_95_dummy->GetXaxis()->SetRangeUser(x[0],x[3]);
  //g_up_95_dummy->Draw("AF");
- double min =0.1 ;
- //g_up_95->SetMinimum(min);
+ double min =0.01 ;
+ g_up_95->SetMinimum(min);
  g_up_95->GetXaxis()->SetRangeUser(x[0],x[2]);
- g_up_95->SetMaximum(4);
+ g_up_95->SetMaximum(25);
  g_up_95->Draw("AF");
  // g_up_95->Draw("F SAME");
  // g_up_68->Draw("F SAME"); 
@@ -330,7 +330,7 @@ g_central1->SetFillColor(0);
  // g_up_95_dummy->Draw("F SAME");
  //g_observed->Draw("L SAME");
 
- //g_central3->Draw("L SAME");
+ g_central3->Draw("L SAME");
  g_central1->Draw("L SAME");
  g_central2->Draw("L SAME");
  g_central->Draw("L SAME");
@@ -352,11 +352,12 @@ g_central1->SetFillColor(0);
 
  // entries[1]=leg1->AddEntry(g_central2, "expected 95% C.L. upper limits Wb (e/mu channel)","L");
 
- //  entries[1]=leg1->AddEntry(g_central3, "expected 95% C.L. upper limits (top cat.)","L");
+ entries[1]=leg1->AddEntry(g_central3, "2015 data set (B2G-16-013)","L");
+ leg1->AddEntry((TObject*)0, "observed 95% C.L. upper limits (Wb)", "");  
  entries[1]=leg1->AddEntry(g_central2, "expected 95% C.L. upper limits  (Wb)","L");
-  // entries[1]=leg1->AddEntry(g_central, "expected 95% C.L. upper limits (chi^{2}<50) comb","L");
+ // entries[1]=leg1->AddEntry(g_central, "expected 95% C.L. upper limits (chi^{2}<50) comb","L");
  entries[1]=leg1->AddEntry(g_central, "expected 95% C.L. upper limits (Zt)","L");
-  entries[1]=leg1->AddEntry(g_central1, "expected 95% C.L. upper limits (HT)","L");
+ entries[1]=leg1->AddEntry(g_central1, "expected 95% C.L. upper limits (HT)","L");
 
 
  // entries[2]=leg1->AddEntry(g_theory, "LQ_{3} (NLO, Kraemer et al.)","L");
@@ -389,8 +390,8 @@ g_central1->SetFillColor(0);
   h->UseCurrentStyle();
   h->GetXaxis()->SetRangeUser(200,1000);
  //h->SetXTitle(" m_{t#bar{t}} [GeV/c^{2}]");
- h->SetXTitle(" m_{Z'} [GeV/c^{2}]");
- h->SetYTitle("#sigma(pp#rightarrow Z'#rightarrow t T' (Ht)) #times BR [pb]");
+ h->SetXTitle(" M_{Z'} [GeV/c^{2}]");
+ h->SetYTitle("#sigma(pp#rightarrow Z'#rightarrow t T') #times BR [pb]");
  h->Draw("AXIS SAME");
  c->GetFrame()->Draw("same");
  c->Print("limitplot.eps");
