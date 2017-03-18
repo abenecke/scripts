@@ -1,7 +1,0 @@
-<h3>Prior Parameters</h3>
-<table cellpadding="2" border="1">
-<tr><th>parameter</th><th>distribution type</th><th>distribution parameters</th></tr>
-<tr><td>wj_rate</td><td>gauss</td><td>width = 1.0; range = [-inf, inf]; mean = 0.0</td></tr>
-<tr><td>ttbar_rate</td><td>gauss</td><td>width = 1.0; range = [-inf, inf]; mean = 0.0</td></tr>
-</table>
-
