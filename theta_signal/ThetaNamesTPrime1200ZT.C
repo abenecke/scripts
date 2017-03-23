@@ -21,7 +21,7 @@ void ThetaNamesTPrime1200ZT()
 
   
   for(int j=0; j<Nsyst; ++j){
-    TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/one_subjet_btag";
+    TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/chsvspuppi";
     if(systname[j]!="default"){
       directory += systname[j];
       directory +="_";
@@ -29,7 +29,7 @@ void ThetaNamesTPrime1200ZT()
     }
     std::cout<< directory <<std::endl;
 
-    TString outfilename = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/one_subjet_btag/theta_histograms_MZPrime";
+    TString outfilename = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/chsvspuppi/theta_histograms_MZPrime";
     if(systname[j]!="default"){
       outfilename += systname[j];
       outfilename +="_";

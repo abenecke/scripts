@@ -103,12 +103,12 @@ void BackgroundNames_HT()
       }
 
       outfile->cd();
-      side1_btag1->Write();
-      side1_btag0->Write();
+      // side1_btag1->Write();
+      // side1_btag0->Write();
       side2_btag1->Write();
       side2_btag0->Write();
-      side3_btag1->Write();
-      side3_btag0->Write();
+      // side3_btag1->Write();
+      // side3_btag0->Write();
 
     }
   }
