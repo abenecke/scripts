@@ -91,10 +91,11 @@ TH2F* rebin(Double_t *bins_x,TH2F *hist,TH2F *rebinned_hist,  TString channel_ra
   return rebinned_hist;
 }
 
-std::vector<TH2F*> rebin(Double_t *bins_x,TH2F *hist,TH2F *hist_CHS ){
+std::vector<TH2F*> rebin(Double_t *bins_x,TH2F *hist,TH2F *hist_CHS, TH2F *hist_CHS_wjec ){
   
   TH2F *rebinned_hist = new TH2F("rebinned",hist->GetTitle(),10,bins_x,200,-1,1);
   TH2F *rebinned_hist_CHS = new TH2F("rebinned_CHS",hist->GetTitle(),10,bins_x,200,-1,1);
+  TH2F *rebinned_hist_CHS_wjec = new TH2F("rebinned_CHS_wjec",hist->GetTitle(),10,bins_x,200,-1,1);
 
   TAxis *xaxis = hist->GetXaxis();
   TAxis *yaxis = hist->GetYaxis();
@@ -103,10 +104,11 @@ std::vector<TH2F*> rebin(Double_t *bins_x,TH2F *hist,TH2F *hist_CHS ){
     for (int i=1; i<=xaxis->GetNbins();i++) {
       rebinned_hist->Fill(xaxis->GetBinCenter(i),yaxis->GetBinCenter(j),hist->GetBinContent(i,j));
       rebinned_hist_CHS->Fill(xaxis->GetBinCenter(i),yaxis->GetBinCenter(j),hist_CHS->GetBinContent(i,j));
+      rebinned_hist_CHS_wjec->Fill(xaxis->GetBinCenter(i),yaxis->GetBinCenter(j),hist_CHS_wjec->GetBinContent(i,j));
     }
   }
  
-  std::vector<TH2F*> results ={rebinned_hist,rebinned_hist_CHS};
+  std::vector<TH2F*> results ={rebinned_hist,rebinned_hist_CHS,rebinned_hist_CHS_wjec};
   return results;
 }
 

@@ -24,7 +24,7 @@ void puppiplotter()
   bool bGamma=false;
   bool bDY=true;
   bool bscale=true;
-  bool beff=false;
+  bool beff=true;
 
  
 
@@ -43,13 +43,13 @@ void puppiplotter()
     // std::vector<TString> ak_ranges={ "topjet","jet"};
     // std::vector<TString> eff_ranges={"Efficiency_Gen", "Purity_Reco"};
     // std::vector<TString> var_ranges={"JetEta", "JetPt","JetNPV"};
-     std::vector<TString> scale_ranges={"TopJetMassScale_","TopJetMassScale_GEV_"};
+    std::vector<TString> scale_ranges={"TopJetMassScale_","TopJetMassScale_GEV_"};
 
     std::vector<TString>  eta_ranges={"Eta0to1p3"};
     std::vector<TString> pt_ranges={"100to150"};
     std::vector<TString> ak_ranges={"topjet","jet"};
     std::vector<TString> eff_ranges={"Efficiency_Gen"};
-     std::vector<TString> var_ranges={"JetPt"};
+    std::vector<TString> var_ranges={"JetPt"};
 
     if(bscale){
       for(int i=0;i<ak_ranges.size();i++){
@@ -71,14 +71,20 @@ void puppiplotter()
 	      //read in Histogramms
 	      TH2F* hist = (TH2F*)QCD_f->Get(hist_name);
 	      TH2F* hist_CHS = (TH2F*)QCD_CHS_f->Get(hist_name);
+	      //jec correction applied hist with CHS
+	      TString  hist_name_wjec = "uncorrected_";
+	      hist_name+= hist_name;
+	      TH2F* hist_CHS_wjec = (TH2F*)QCD_CHS_f->Get(hist_name_wjec);
+
 	      if (berror) save_canvas("input_hist","input/","colz", hist, hist_CHS,ranges );
 	     
 	      if(berror) std::cout<<"JetPTScale::rebin Hists "<<hist_name<<std::endl;
 	      //rebin hists as in presentation	  
 	      Double_t bins_x[11]={0,5,10,15,20,25,30,35,40,60,100};
-	      std::vector<TH2F*> rebinned_results =rebin(bins_x,hist,hist_CHS );
+	      std::vector<TH2F*> rebinned_results =rebin(bins_x,hist,hist_CHS, hist_CHS_wjec );
 	      TH2F* rebinned_hist = rebinned_results[0];
 	      TH2F* rebinned_hist_CHS =rebinned_results[1];
+	      TH2F* rebinned_hist_CHS_wjec =rebinned_results[2];
 
 	      if (berror)save_canvas("rebinned_hist","rebinned/","colz", rebinned_hist, rebinned_hist_CHS,ranges );
 
@@ -92,15 +98,21 @@ void puppiplotter()
 	      TH1F *result_mean_CHS = results_CHS[0];
 	      TH1F *result_rms_CHS = results_CHS[1];
 	      TH1F *rms_CHS = results_CHS[2];
+
+
+	      std::vector<TH1F*> results_CHS_wjec = gaussianfit( bins_x,   ranges ,rebinned_hist_CHS_wjec );
+	      TH1F *result_mean_CHS_wjec = results_CHS_wjec[0];
+	      TH1F *result_rms_CHS_wjec = results_CHS_wjec[1];
+	      TH1F *rms_CHS_wjec = results_CHS_wjec[2];
    
 	      ////////////////////////////////////////////////////////////////////////////////////////  Save Result mean   //////////////////////////////////////////////////////////////////
-	      std::vector<TH1F*> mean_results = {result_mean,result_mean_CHS};
+	      std::vector<TH1F*> mean_results = {result_mean,result_mean_CHS,result_mean_CHS_wjec};
 	      if(ak_ranges[i]=="jet")  save_result(1, -1,"NPV", "Mean ((P_{T,reco} - P_{T,gen} )/P_{T,gen} )",mean_results, ranges,"mean");
 	      if(ak_ranges[i]=="topjet" &&scale_ranges[l]=="TopJetMassScale_GEV_" ) save_result(20, -20,"NPV", "Mean (M_{T,reco} - M_{T,gen} ) [GeV]",mean_results, ranges,"mean");
 	      if(ak_ranges[i]=="topjet" &&!(scale_ranges[l]=="TopJetMassScale_GEV_")  ) save_result(20, -20,"NPV", "Mean ((M_{T,reco} - M_{T,gen} )/M_{T,gen} )", mean_results,   ranges,"mean");
 	     
 	      ////////////////////////////////////////////////////////////////////////////////////////  Save Result rms   //////////////////////////////////////////////////////////////////
-	      std::vector<TH1F*> rms_results = {result_rms,result_rms_CHS,rms,rms_CHS};
+	      std::vector<TH1F*> rms_results = {result_rms,result_rms_CHS,rms,rms_CHS,result_rms_CHS_wjec,rms_CHS_wjec};
 	      if(ak_ranges[i]=="jet")  save_result(0.6,0,"NPV", "Rms ((P_{T,reco} - P_{T,gen} )/P_{T,gen} )",rms_results, ranges,"rms");
 	      if(ak_ranges[i]=="topjet" &&scale_ranges[l]=="TopJetMassScale_GEV_" ) save_result(20,0,"NPV", "Rms (M_{T,reco} - M_{T,gen} ) [GeV]", rms_results,  ranges,"rms");
 	      if(ak_ranges[i]=="topjet"&&scale_ranges[l]=="TopJetMassScale_")save_result(2,0,"NPV", "Rms (M_{T,reco} - M_{T,gen} ) [GeV]", rms_results, ranges,"rms");
@@ -363,7 +375,7 @@ void puppiplotter()
 
       if(berror)std::cout<<"DY::Response recoil"<<std::endl;
       /////////////////////////////////////////////////////                       Response of recoil in DY                  ////////////////////////////////////////////////////////////////
-      if(false){    
+      if(true){    
 	for(int j=0;j<sel_ranges.size();j++){
 	//read in Histogramms
 	TString hist_name="DY_";
