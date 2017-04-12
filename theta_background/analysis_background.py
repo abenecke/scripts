@@ -1,6 +1,10 @@
 model = build_model_from_rootfile('/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/sidebands/theta_histograms_background_MZPrime.root',include_mc_uncertainties = True)
 model.fill_histogram_zerobins()
 model.set_signal_processes('MC_ZPrime*')
+#for p in model.processes:
+#    model.add_lognormal_uncertainty('lumi', math.log(1.026), p)
+#    model.add_lognormal_uncertainty('muonid', math.log(1.005), p)
+#    model.add_lognormal_uncertainty('muontrigger', math.log(1.1), p)
 model.add_lognormal_uncertainty('wj_rate', math.log(1.5), 'WJets')
 #model.add_lognormal_uncertainty('zj_rate', math.log(1.5), 'DYJetsToLL')
 model.add_lognormal_uncertainty('ttbar_rate', math.log(1.5), 'TTbar')

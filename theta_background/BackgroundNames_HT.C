@@ -6,7 +6,7 @@ void BackgroundNames_HT()
 {
   const int nproc=9;
 
-  TString process[nproc] = {"TTbar", "WJets","QCD","ST","DYJetsToLL","MC_ZPrime1500ToTPrime1200T_TPrimeToHT","MC_ZPrime2000ToTPrime1200T_TPrimeToHT","MC_ZPrime2500ToTPrime1200T_TPrimeToHT","DATA"};
+  TString process[nproc] = {"TTbar", "WJets","QCD","ST","DYJetsToLL","MC_ZPrime1500ToTPrime1200T_TPrimeToHT","MC_ZPrime2000ToTPrime1200T_TPrimeToHT","MC_ZPrime2500ToTPrime1500T_TPrimeToHT","DATA"};
    //TString process[nproc] = {"TTbar", "WJets","QCD","ST","DYJetsToLL"};
 
 
@@ -18,7 +18,7 @@ void BackgroundNames_HT()
 
   
   for(int j=0; j<Nsyst; ++j){
-    TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/sidebands";
+    TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/sideband_masscut";
     if(systname[j]!="default"){
       directory += systname[j];
       directory +="_";
@@ -26,7 +26,7 @@ void BackgroundNames_HT()
     }
     std::cout<< directory <<std::endl;
 
-    TString outfilename = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/sidebands/theta_histograms_background_MZPrime";
+    TString outfilename = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/sideband_masscut/theta_histograms_background_MZPrime";
     if(systname[j]!="default"){
       outfilename += systname[j];
       outfilename +="_";
@@ -48,21 +48,21 @@ void BackgroundNames_HT()
       if(process[i]=="DATA") mcdata = "DATA";
        
       std::cout<< directory+"/."+mcdata+"."+process[i]+".root" << std::endl;
-      TFile * infile_side1 = new TFile(directory+"/side1/uhh2.AnalysisModuleRunner."+mcdata+"."+process[i]+".root");
-      infile_side1->cd();
+      // TFile * infile_side1 = new TFile(directory+"/side1/uhh2.AnalysisModuleRunner."+mcdata+"."+process[i]+".root");
+      // infile_side1->cd();
       TFile * infile_side2 = new TFile(directory+"/side2/uhh2.AnalysisModuleRunner."+mcdata+"."+process[i]+".root");
       infile_side2->cd();
-      TFile * infile_side3 = new TFile(directory+"/side3/uhh2.AnalysisModuleRunner."+mcdata+"."+process[i]+".root");
-      infile_side3->cd();
+      // TFile * infile_side3 = new TFile(directory+"/side3/uhh2.AnalysisModuleRunner."+mcdata+"."+process[i]+".root");
+      // infile_side3->cd();
        
       std::cout << "   got the file" <<endl;
  
-     TH1F* side1_btag1 =  (TH1F*)infile_side1->Get("chi2min_btag1/M_ZPrime_rec");
-     TH1F* side1_btag0 =  (TH1F*)infile_side1->Get("chi2min_btag0/M_ZPrime_rec");
+     // TH1F* side1_btag1 =  (TH1F*)infile_side1->Get("chi2min_btag1/M_ZPrime_rec");
+     // TH1F* side1_btag0 =  (TH1F*)infile_side1->Get("chi2min_btag0/M_ZPrime_rec");
      TH1F* side2_btag1 =  (TH1F*)infile_side2->Get("chi2min_btag1/M_ZPrime_rec");
      TH1F* side2_btag0 =  (TH1F*)infile_side2->Get("chi2min_btag0/M_ZPrime_rec");
-     TH1F* side3_btag1 =  (TH1F*)infile_side3->Get("chi2min_btag1/M_ZPrime_rec");
-     TH1F* side3_btag0 =  (TH1F*)infile_side3->Get("chi2min_btag0/M_ZPrime_rec");
+     // TH1F* side3_btag1 =  (TH1F*)infile_side3->Get("chi2min_btag1/M_ZPrime_rec");
+     // TH1F* side3_btag0 =  (TH1F*)infile_side3->Get("chi2min_btag0/M_ZPrime_rec");
        
      
           
@@ -74,31 +74,31 @@ void BackgroundNames_HT()
       // TH1F* M_zwnotop =  (TH1F*)  M_zwnotop_old->Rebin(17,"M_zwnotop",zwnotop);   
     
 
-       // TH1F* hist = (TH1F*)infile->Get("zw_top_chi2min_btag50/M_ZPrime_rec");
-       // // hist->Rebin(4);
-       // for (int i=1; i<hist->GetNbinsX()+1; ++i){
-       // 	 cout << hist->GetXaxis()->GetBinLowEdge(i) << ", ";}
+     // TH1F* hist = side2_btag1;
+     //   // hist->Rebin(4);
+     //   for (int i=1; i<hist->GetNbinsX()+1; ++i){
+     //   	 cout << hist->GetXaxis()->GetBinLowEdge(i) << ", ";}
        
      
       std::cout << "   got the histos" <<endl;
          
       if(systname[j]!="default"){
 
-	side1_btag1 ->SetName("MZPrime_TPrime1200HT_side1_btag1__"+process[i]+"__"+systname[j]+"__"+systshift2);
-	side1_btag0 ->SetName("MZPrime_TPrime1200HT_side1_btag0__"+process[i]+"__"+systname[j]+"__"+systshift2);
+	// side1_btag1 ->SetName("MZPrime_TPrime1200HT_side1_btag1__"+process[i]+"__"+systname[j]+"__"+systshift2);
+	// side1_btag0 ->SetName("MZPrime_TPrime1200HT_side1_btag0__"+process[i]+"__"+systname[j]+"__"+systshift2);
 	side2_btag1 ->SetName("MZPrime_TPrime1200HT_side2_btag1__"+process[i]+"__"+systname[j]+"__"+systshift2);
 	side2_btag0 ->SetName("MZPrime_TPrime1200HT_side2_btag0__"+process[i]+"__"+systname[j]+"__"+systshift2);
-	side3_btag1 ->SetName("MZPrime_TPrime1200HT_side3_btag1__"+process[i]+"__"+systname[j]+"__"+systshift2);
-	side3_btag0->SetName("MZPrime_TPrime1200HT_side3_btag0__"+process[i]+"__"+systname[j]+"__"+systshift2);
+	// side3_btag1 ->SetName("MZPrime_TPrime1200HT_side3_btag1__"+process[i]+"__"+systname[j]+"__"+systshift2);
+	// side3_btag0->SetName("MZPrime_TPrime1200HT_side3_btag0__"+process[i]+"__"+systname[j]+"__"+systshift2);
 
       }
       else{
-	side1_btag1 ->SetName("MZPrime_TPrime1200HT_side1_btag1__"+process[i]);
-	side1_btag0 ->SetName("MZPrime_TPrime1200HT_side1_btag0__"+process[i]);
+	// side1_btag1 ->SetName("MZPrime_TPrime1200HT_side1_btag1__"+process[i]);
+	// side1_btag0 ->SetName("MZPrime_TPrime1200HT_side1_btag0__"+process[i]);
 	side2_btag1 ->SetName("MZPrime_TPrime1200HT_side2_btag1__"+process[i]);
 	side2_btag0 ->SetName("MZPrime_TPrime1200HT_side2_btag0__"+process[i]);
-	side3_btag1 ->SetName("MZPrime_TPrime1200HT_side3_btag1__"+process[i]);
-	side3_btag0->SetName("MZPrime_TPrime1200HT_side3_btag0__"+process[i]);
+	// side3_btag1 ->SetName("MZPrime_TPrime1200HT_side3_btag1__"+process[i]);
+	// side3_btag0->SetName("MZPrime_TPrime1200HT_side3_btag0__"+process[i]);
 	 
       }
 
