@@ -38,18 +38,18 @@ void puppiplotter()
     TString hist_name;
 
     //defining all Eta ranges
-    // std::vector<TString> eta_ranges={"Eta0to1p3","Eta1p3to2","Eta2to2p5","Eta2p5to3","Eta3to10"};
-    // std::vector<TString> pt_ranges={"30to40", "100to150"};
-    // std::vector<TString> ak_ranges={ "topjet","jet"};
-    // std::vector<TString> eff_ranges={"Efficiency_Gen", "Purity_Reco"};
-    // std::vector<TString> var_ranges={"JetEta", "JetPt","JetNPV"};
+    std::vector<TString> eta_ranges={"Eta0to1p3","Eta1p3to2","Eta2to2p5","Eta2p5to3","Eta3to10"};
+    std::vector<TString> pt_ranges={"30to40", "100to150"};
+    std::vector<TString> ak_ranges={ "topjet","jet"};
+    std::vector<TString> eff_ranges={"Efficiency_Gen", "Purity_Reco"};
+    std::vector<TString> var_ranges={"JetEta", "JetPt","JetNPV"};
     std::vector<TString> scale_ranges={"TopJetMassScale_","TopJetMassScale_GEV_"};
 
-    std::vector<TString>  eta_ranges={"Eta0to1p3"};
-    std::vector<TString> pt_ranges={"100to150"};
-    std::vector<TString> ak_ranges={"topjet","jet"};
-    std::vector<TString> eff_ranges={"Efficiency_Gen"};
-    std::vector<TString> var_ranges={"JetPt"};
+    //  std::vector<TString>  eta_ranges={"Eta0to1p3"};
+    // std::vector<TString> pt_ranges={"30to40"};
+    // std::vector<TString> ak_ranges={"jet"};
+    // std::vector<TString> eff_ranges={"Efficiency_Gen"};
+    //    std::vector<TString> var_ranges={"JetNPV"};
 
     if(bscale){
       for(int i=0;i<ak_ranges.size();i++){
@@ -73,10 +73,11 @@ void puppiplotter()
 	      TH2F* hist_CHS = (TH2F*)QCD_CHS_f->Get(hist_name);
 	      //jec correction applied hist with CHS
 	      TString  hist_name_wjec = "uncorrected_";
-	      hist_name+= hist_name;
+	      hist_name_wjec+= hist_name;  
+	      if(berror) std::cout<<"JetPTScale::read in Hists "<<hist_name_wjec<<std::endl;
 	      TH2F* hist_CHS_wjec = (TH2F*)QCD_CHS_f->Get(hist_name_wjec);
 
-	      if (berror) save_canvas("input_hist","input/","colz", hist, hist_CHS,ranges );
+	      if (berror) save_canvas("input_hist","input/","colz", hist_CHS_wjec, hist_CHS,ranges );
 	     
 	      if(berror) std::cout<<"JetPTScale::rebin Hists "<<hist_name<<std::endl;
 	      //rebin hists as in presentation	  
@@ -86,7 +87,7 @@ void puppiplotter()
 	      TH2F* rebinned_hist_CHS =rebinned_results[1];
 	      TH2F* rebinned_hist_CHS_wjec =rebinned_results[2];
 
-	      if (berror)save_canvas("rebinned_hist","rebinned/","colz", rebinned_hist, rebinned_hist_CHS,ranges );
+	      if (berror)save_canvas("rebinned_hist","rebinned/","colz", rebinned_hist_CHS_wjec, rebinned_hist_CHS,ranges );
 
 	      std::vector<TH1F*> results = gaussianfit( bins_x,   ranges ,rebinned_hist );
 	      TH1F *result_mean = results[0];
@@ -100,7 +101,7 @@ void puppiplotter()
 	      TH1F *rms_CHS = results_CHS[2];
 
 
-	      std::vector<TH1F*> results_CHS_wjec = gaussianfit( bins_x,   ranges ,rebinned_hist_CHS_wjec );
+	      std::vector<TH1F*> results_CHS_wjec = gaussianfit( bins_x,   ranges ,rebinned_hist_CHS_wjec, "_wjec" );
 	      TH1F *result_mean_CHS_wjec = results_CHS_wjec[0];
 	      TH1F *result_rms_CHS_wjec = results_CHS_wjec[1];
 	      TH1F *rms_CHS_wjec = results_CHS_wjec[2];
@@ -142,34 +143,33 @@ void puppiplotter()
 	    if(berror) std::cout<<"Purity and Efficiency::read in Hists "<<hist_name<<std::endl;
 	    //read in Histogramms
 	    TH1F* hist = (TH1F*)QCD_f->Get(hist_name);
-	    TH1F* hist_CHS = (TH1F*)QCD_CHS_f->Get(hist_name);
+	    TH1F* hist_CHS = (TH1F*)QCD_CHS_f->Get(hist_name); 
+
+	    //jec correction applied hist with CHS
+	    TString  hist_name_wjec = "uncorrected_";
+	    hist_name_wjec+= hist_name;  
+	    
 	    if(ak_ranges[i]=="jet") hist_name+="_matchedjet";
 	    if(ak_ranges[i]=="topjet") hist_name+="_matchedTopJet";
 	    TH1F* hist_matched = (TH1F*)QCD_f->Get(hist_name);
 	    TH1F* hist_CHS_matched = (TH1F*)QCD_CHS_f->Get(hist_name);
-
-	    TCanvas *hist_c= new TCanvas("hist_c","hist",10,10,1000,1000);
-	    hist_c->Clear();
-	    hist_c->cd();
-	    hist->Draw();
-	    hist_CHS->SetMarkerColor(kGreen);
-	    hist_CHS->SetLineColor(kGreen);
-	    hist_CHS->Draw("same");
-	    hist_c->Print(output_folder+folder+"/input/"+ak_ranges[i]+"_"+eff_ranges[j]+"_"+var_ranges[k]+".eps");
-	    TCanvas *hist_matched_c= new TCanvas("hist_matched_c","hist_matched",10,10,1000,1000);
-	    hist_matched_c->Clear();
-	    hist_matched_c->cd();
-	    hist_matched->Draw();
-	    hist_CHS_matched->SetLineColor(kGreen);
-	    hist_CHS_matched->SetMarkerColor(kGreen);
-	    hist_CHS_matched->Draw("same");
-	    hist_matched_c->Print(output_folder+folder+"/input/"+ak_ranges[i]+"_"+eff_ranges[j]+"_"+var_ranges[k]+"_matched.eps");
+	    
+	    //jec correction applied hist with CHS
+	    if(ak_ranges[i]=="jet") hist_name_wjec+="_matchedjet";
+	    if(ak_ranges[i]=="topjet") hist_name_wjec+="_matchedTopJet";
+	    if(berror) std::cout<<"JetPTScale::read in Hists "<<hist_name_wjec<<std::endl;
+	    TH1F* hist_CHS_wjec = (TH1F*)QCD_CHS_f->Get(hist_name_wjec);
+	    TH1F* hist_CHS_wjec_matched = (TH1F*)QCD_CHS_f->Get(hist_name_wjec);
 
 
-
+	    //    if (berror) save_canvas("input_hist","input/","colz", hist, hist_CHS,ranges );
+	    //    if (berror) save_canvas("input_hist","input/matched_","colz", hist_matched, hist_CHS_matched,ranges );
+	   
+	  
 	    //divide both hists
 	    TGraphAsymmErrors* eff = new TGraphAsymmErrors( hist_matched, hist, "cl=0.683 b(1,1) mode" );
 	    TGraphAsymmErrors* eff_CHS = new TGraphAsymmErrors( hist_CHS_matched, hist_CHS, "cl=0.683 b(1,1) mode" );
+	    TGraphAsymmErrors* eff_CHS_wjec = new TGraphAsymmErrors( hist_CHS_wjec_matched, hist_CHS_wjec, "cl=0.683 b(1,1) mode" );
 	
 	
 	    TCanvas *result_eff_c= new TCanvas("result_eff_c","Result Efficiency",10,10,1000,1000);
@@ -201,6 +201,9 @@ void puppiplotter()
 	    eff_CHS->SetLineColor(kGreen);
 	    eff_CHS->SetMarkerColor(kGreen);
 	    eff_CHS->Draw("same");
+	    eff_CHS_wjec->SetLineColor(kRed);
+	    eff_CHS_wjec->SetMarkerColor(kRed);
+	    eff_CHS_wjec->Draw("same");
 	    //Legend
 	    TLegend *leg = new TLegend(0.35,0.23,0.7,0.13, NULL,"brNDC");
 	    if(ak_ranges[i]=="jet")	leg->SetHeader("AK4 Jet Efficiency");
@@ -208,14 +211,15 @@ void puppiplotter()
 	    leg->SetBorderSize(0);
 	    leg->SetFillStyle(0);
 	    leg->AddEntry(eff_CHS,"CHS","lpe");
+	    leg->AddEntry(eff_CHS_wjec,"CHS w JEC","lpe");
 	    leg->AddEntry(eff,"Puppi","lpe");
 	    leg->Draw();
 
 	    //save
 	    result_eff_c->Print(output_folder+folder+"/"+ak_ranges[i]+"_"+eff_ranges[j]+"_"+var_ranges[k]+".eps");
 	    result_eff_c->Destructor();
-	    hist_c->Destructor();
-	    hist_matched_c->Destructor();
+	    //   hist_c->Destructor();
+	    //  hist_matched_c->Destructor();
 	  }//var_ranges
 	}//eff or Purity
       }//ak_ranges
@@ -303,24 +307,31 @@ void puppiplotter()
 
   }//bQCD
   if(bGamma){  
-    TFile *Gamma_f = new TFile(directory+folder+"/uhh2.AnalysisModuleRunner.MC.GJets.root", "READ");
-    TFile *Gamma_CHS_f = new TFile(directory+folder+"/uhh2.AnalysisModuleRunner.MC.MC_GJets_CHS.root", "READ");
+    TFile *Gamma_f = new TFile(directory+folder+"/GJets/uhh2.AnalysisModuleRunner.MC.MC_GJets_HT_40To100.root", "READ");
+    TFile *Gamma_CHS_f = new TFile(directory+folder+"/GJets/CHS/uhh2.AnalysisModuleRunner.MC.MC_GJets_HT_40To100_CHS.root", "READ");
     //MET
     TH1F* hist_MET = (TH1F*)Gamma_f->Get("jet_input/MET");
     TH1F* hist_CHS_MET = (TH1F*)Gamma_CHS_f->Get("jet_input/MET");
+    // //jec correction applied hist with CHS
+    // TH1F* hist_CHS_wjec_MET = (TH1F*)Gamma_CHS_f->Get("uncorrected_jet_input/MET");
 	
     TCanvas *c14 = new TCanvas("c14","uncorrected MET",10,10,1000,1000);
     c14->Clear();
     c14->cd();
     gPad->SetTickx();
     gPad->SetTicky();
+    gPad->SetLogy();
     hist_MET->Draw("E1");
     hist_CHS_MET->SetLineColor(kGreen);
     hist_CHS_MET->SetMarkerColor(kGreen);
     hist_CHS_MET->Draw("same E1");
+    // hist_CHS_wjec_MET->SetLineColor(kRed);
+    // hist_CHS_wjec_MET->SetMarkerColor(kRed);
+    // hist_CHS_wjec_MET->Draw("same E1");
     TLegend *leg_MET = new TLegend(0.65,0.83,0.9,0.73, NULL,"brNDC");
     leg_MET->AddEntry(hist_MET,"uncorrected MET (Puppi)","lpe");
     leg_MET->AddEntry(hist_CHS_MET,"uncorrected MET (CHS)","lpe");
+    //  leg_MET->AddEntry(hist_CHS_wjec_MET,"MET (CHS)","lpe");
     leg_MET->SetBorderSize(0);
     leg_MET->SetFillStyle(0);
     leg_MET->Draw();
@@ -334,7 +345,7 @@ void puppiplotter()
     std::vector<TString> sel_ranges={"output","Zptk50","Zptg50"};
     TFile *DY_f,*DY_CHS_f;
 
-    if(berror)channel_ranges={"muon"};
+    if(berror)channel_ranges={"ele"};
 
     //over all ranges
     for(int i=0;i<channel_ranges.size();i++){
@@ -344,8 +355,8 @@ void puppiplotter()
 	DY_CHS_f = new TFile(directory+folder+"/uhh2.AnalysisModuleRunner.MC.MC_DY_muon_CHS.root", "READ");
       }
       else if(channel_ranges[i]=="ele"){
-	DY_f = new TFile(directory+folder+"/uhh2.AnalysisModuleRunner.MC.MC_DY_ele.root", "READ");
-	DY_CHS_f = new TFile(directory+folder+"/uhh2.AnalysisModuleRunner.MC.MC_DY_ele_CHS.root", "READ");
+	DY_f = new TFile(directory+folder+"/uhh2.AnalysisModuleRunner.MC.MC_DY_elec.root", "READ");
+	DY_CHS_f = new TFile(directory+folder+"/uhh2.AnalysisModuleRunner.MC.MC_DY_elec_CHS.root", "READ");
       }else std::cout<<"Channel not defined"<<std::endl;
 
       if(berror) std::cout<<"DY::Met"<<std::endl;
@@ -358,10 +369,19 @@ void puppiplotter()
       c14->cd();
       gPad->SetTickx();
       gPad->SetTicky();
+
       hist_MET->Draw("E1");
       hist_CHS_MET->SetLineColor(kGreen);
       hist_CHS_MET->SetMarkerColor(kGreen);
       hist_CHS_MET->Draw("same E1");
+
+      TPaveText *pt = new TPaveText(.40,.22,.60,.28,"nbNDC");
+      if(channel_ranges[i] == "ele") pt->AddText("electron channel");
+      if(channel_ranges[i] == "muon") pt->AddText("muon channel");
+      pt->SetFillColor(0);
+      pt->SetTextSize(0.04);
+      pt->Draw();
+
       TLegend *leg_MET = new TLegend(0.65,0.83,0.9,0.73, NULL,"brNDC");
       leg_MET->AddEntry(hist_MET,"uncorrected MET (Puppi)","lpe");
       leg_MET->AddEntry(hist_CHS_MET,"uncorrected MET (CHS)","lpe");

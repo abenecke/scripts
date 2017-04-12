@@ -112,7 +112,7 @@ std::vector<TH2F*> rebin(Double_t *bins_x,TH2F *hist,TH2F *hist_CHS, TH2F *hist_
   return results;
 }
 
-std::vector<TH1F*> gaussianfit(Double_t *bins_x, std::vector<TString> ranges,TH2F *rebinned_hist){
+std::vector<TH1F*> gaussianfit(Double_t *bins_x, std::vector<TString> ranges,TH2F *rebinned_hist, TString post_fix =""){
 
   //Get slice of NPV to see gaussian distribution for Mean and RMS
   TH1D *gaussian;
@@ -151,9 +151,11 @@ std::vector<TH1F*> gaussianfit(Double_t *bins_x, std::vector<TString> ranges,TH2
     gaussian_fit->SetParameter(0, 0);
     gaussian_fit->SetParameter(1, 0.2);
     gaussian->Fit(gaussian_fit);
-    for(int i=0; i<2;i++){
-      double lower_bound = gaussian_fit->GetParameter(1) -1.5*gaussian_fit->GetParameter(2);
-      double higher_bound = gaussian_fit->GetParameter(1)+1.5*gaussian_fit->GetParameter(2);
+    for(int i=0; i<4;i++){
+      /* double lower_bound = gaussian_fit->GetParameter(1) -1.5*gaussian_fit->GetParameter(2); */
+      /* double higher_bound = gaussian_fit->GetParameter(1)+1.5*gaussian_fit->GetParameter(2); */
+      double lower_bound = gaussian_fit->GetParameter(1) -1.0*gaussian_fit->GetParameter(2);
+      double higher_bound = gaussian_fit->GetParameter(1)+1.0*gaussian_fit->GetParameter(2);
       if(berror) std::cout<<"lower boundary  "<<lower_bound << "higher boundary  "<<higher_bound<<std::endl;
       if(berror) std::cout<<"mean  "<<gaussian_fit->GetParameter(1) <<"rms  "<< gaussian_fit->GetParameter(2)<<std::endl;
       
@@ -168,7 +170,7 @@ std::vector<TH1F*> gaussianfit(Double_t *bins_x, std::vector<TString> ranges,TH2
     string str = ss.str();
     
 
-    c3->Print(output_folder+folder+"/gaussian/"+ak_ranges+"_"+scale_ranges+pt_ranges+"_"+eta_ranges+"_slice_"+str+"_gaussian.eps");
+    c3->Print(output_folder+folder+"/gaussian/"+ak_ranges+"_"+scale_ranges+pt_ranges+"_"+eta_ranges+"_slice_"+str+"_gaussian"+post_fix+".eps");
     
     if(berror) std::cout<<"Mean  "<<gaussian_fit->GetParameter(1)<<std::endl;
     if(berror) std::cout<<"Mean by GetMean "<<gaussian->GetMean()<<std::endl;
@@ -212,6 +214,10 @@ void save_result(double max, double min,TString Xtitle,TString Ytitle,std::vecto
     if(i==2) result_hist[i]->SetLineColor(kRed);
     if(i==3) result_hist[i]->SetMarkerColor(kOrange);
     if(i==3) result_hist[i]->SetLineColor(kOrange);
+    if(i==4) result_hist[i]->SetMarkerColor(kViolet);
+    if(i==4) result_hist[i]->SetLineColor(kViolet);
+    if(i==5) result_hist[i]->SetMarkerColor();
+    if(i==5) result_hist[i]->SetLineColor(kBlack);
     result_hist[i]->Draw("same E1");
   
   }
@@ -233,22 +239,25 @@ void save_result(double max, double min,TString Xtitle,TString Ytitle,std::vecto
   eta->Draw();
   //Legend
   TLegend *leg = new TLegend(0.25,0.88,0.5,0.68, NULL,"brNDC");
+  if(meanvsrms=="mean"){
+    leg->AddEntry(result_hist[1],"CHS","lpe");
+    leg->AddEntry(result_hist[2],"CHS w JEC","lpe");
+    leg->AddEntry(result_mean,"Puppi","lpe");
+  }else{
+    leg = new TLegend(0.25,0.88,0.5,0.58, NULL,"brNDC");
+    leg->AddEntry(result_hist[3],"CHS RMS","lpe");
+    leg->AddEntry(result_hist[5],"CHS w JEC RMS","lpe");
+    leg->AddEntry(result_hist[2],"Puppi RMS","lpe");
+    leg->AddEntry(result_hist[1],"CHS 1#sigma","lpe");
+    leg->AddEntry(result_hist[4],"CHS w JEC 1#sigma","lpe");
+    leg->AddEntry(result_hist[0],"Puppi 1#sigma","lpe");
+  }
   if(ak_ranges=="jet")	leg->SetHeader("AK4 Jet P_{T} Scale");
   if(ak_ranges=="topjet")	leg->SetHeader("AK8 Jet Mass Scale");
   if(meanvsrms=="rms"&&ak_ranges=="jet")	leg->SetHeader("AK4 Jet P_{T} Resolutuion");
   if(meanvsrms=="rms"&&ak_ranges=="topjet")	leg->SetHeader("AK8 Jet Mass Resolution");
   leg->SetBorderSize(0);	
   leg->SetFillStyle(0);
-  if(meanvsrms=="mean"){
-    leg->AddEntry(result_hist[1],"CHS","lpe");
-    leg->AddEntry(result_mean,"Puppi","lpe");
-  }else{
-    leg->AddEntry(result_hist[3],"CHS RMS","lpe");
-    leg->AddEntry(result_hist[2],"Puppi RMS","lpe");
-    leg->AddEntry(result_hist[1],"CHS 1#sigma","lpe");
-    leg->AddEntry(result_hist[0],"Puppi 1#sigma","lpe");
-  }
-
   leg->Draw();
   //save
   result_mean_c->Print(output_folder+folder+"/"+ak_ranges+"_"+scale_ranges+pt_ranges+"_"+eta_ranges+"_result_"+meanvsrms+".eps");
