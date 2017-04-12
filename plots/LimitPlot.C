@@ -207,6 +207,7 @@ void limit()
   double HT_data2016_noH1_notop[3]={0.114,0.077,0.0581};
   double HT_data2016_tagger_priority[3]={0.0982,0.0437,0.0271};
   double HT_data2016_puppi[3]={0.105,0.0427,0.0263};
+  double HT_data2016_puppi_masswindow[3]={0.113,0.044,0.0281};
   double HT_data2016_btag[3]={0.0955,0.0491,0.0297};
 
   double ZT_data2016_noH1[3]={0.289,0.0932,0.0522};
@@ -249,9 +250,9 @@ void limit()
  TGraph* g_up_95 = new TGraph(5,x2,up_95);
  TGraph* g_up_68 = new TGraph(5,x2,up_68);
  // TGraph* g_observed = new TGraph(3,x,observed);
- TGraph* g_central = new TGraph(3,x,ZT_data2016_puppi);
- TGraph* g_central1 = new TGraph(3,x,HT_data2016_puppi);
- TGraph* g_central2 = new TGraph(3,x,HT_data2016_btag);
+ TGraph* g_central = new TGraph(3,x,HT_data2016_puppi);
+ TGraph* g_central1 = new TGraph(3,x,HT_data2016_tagger_priority);
+ TGraph* g_central2 = new TGraph(3,x,HT_data2016_puppi_masswindow);
  TGraph* g_central_a = new TGraph(3,x,ZT_data2016_tagger_priority);
  TGraph* g_central1_a = new TGraph(3,x,HT_data2016_tagger_priority);
  TGraph* g_central2_a = new TGraph(3,x,WB_data2016_tagger_priority);
@@ -354,10 +355,10 @@ g_central1_a->SetFillColor(0);
  //g_observed->Draw("L SAME");
 
  //  g_central3->Draw("L SAME");
- //g_central1->Draw("L SAME");
+ g_central1->Draw("L SAME");
   g_central2->Draw("L SAME");
- // g_central->Draw("L SAME"); 
- g_central1_a->Draw("L SAME");
+  g_central->Draw("L SAME"); 
+  // g_central1_a->Draw("L SAME");
  // g_central2_a->Draw("L SAME");
  // g_central_a->Draw("L SAME");
   
@@ -381,14 +382,15 @@ g_central1_a->SetFillColor(0);
  // entries[1]=leg1->AddEntry(g_central3, "2015 data set (B2G-16-013)","L");
  // leg1->AddEntry((TObject*)0, "observed 95% C.L. upper limits (Wb)", ""); 
  // leg1->AddEntry((TObject*)0, " ", "");
- leg1->AddEntry((TObject*)0, "[btag]", "");
- entries[1]=leg1->AddEntry(g_central2, "expected 95% C.L. upper limits  (Ht)","L");
- // entries[1]=leg1->AddEntry(g_central, "expected 95% C.L. upper limits (Zt)","L");
+  leg1->AddEntry((TObject*)0, "[Puupi]", "");
+ entries[1]=leg1->AddEntry(g_central2, "expected 95% C.L. upper limits masswindow (Ht)","L");
+  entries[1]=leg1->AddEntry(g_central, "expected 95% C.L. upper limits (Ht)","L");
  // entries[1]=leg1->AddEntry(g_central1, "expected 95% C.L. upper limits (Ht)","L");
- leg1->AddEntry((TObject*)0, "[chi2cut]", "");
+  leg1->AddEntry((TObject*)0, "[CHS]", "");
+  entries[1]=leg1->AddEntry(g_central1, "expected 95% C.L. upper limits (Ht)","L");
  // entries[1]=leg1->AddEntry(g_central2_a, "expected 95% C.L. upper limits  (Wb) ","L");
  // entries[1]=leg1->AddEntry(g_central_a, "expected 95% C.L. upper limits (Zt)","L");
-  entries[1]=leg1->AddEntry(g_central1_a, "expected 95% C.L. upper limits (Ht)","L");
+  //  entries[1]=leg1->AddEntry(g_central1_a, "expected 95% C.L. upper limits (Ht)","L");
 
 
  // entries[2]=leg1->AddEntry(g_theory, "LQ_{3} (NLO, Kraemer et al.)","L");
