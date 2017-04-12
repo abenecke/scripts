@@ -7,9 +7,9 @@ void fit_erf()
 {
   
   bool b_error=true;
-  TString unc_name = "none"; // "jersmear_up" , "jersmear_down" ,"jecsmear_up" , "jecsmear_down" , "none"
+  TString unc_name = ""; // "jersmear_up" , "jersmear_down" ,"jecsmear_up" , "jecsmear_down" , "none"
   TString mistag_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/mass/hists/";
-  TString folder ="erf/data2016_";
+  TString folder ="erf/lowpt_";
   // TString folder ="~/ownCloud/masterarbeit/tex/plots/efficiency/master_";
   TString unc_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/efficiency/hists";
 
@@ -19,7 +19,7 @@ void fit_erf()
   gStyle->SetOptStat(0);
 
   //All files are read in
-  TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/efficiency/"+unc_name;
+  TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/efficiency_lowpt200-400"+unc_name;
   TString bkgfolder = "";
   TFile * data_f = new TFile(directory+"/uhh2.AnalysisModuleRunner.Data.Data.root", "READ");
   TFile * TTbar_matched_f = new TFile(directory+"/uhh2.AnalysisModuleRunner.MC.TTbar_right.root", "READ");
