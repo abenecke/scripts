@@ -345,7 +345,7 @@ void puppiplotter()
     std::vector<TString> sel_ranges={"output","Zptk50","Zptg50"};
     TFile *DY_f,*DY_CHS_f;
 
-    if(berror)channel_ranges={"ele"};
+    if(berror)channel_ranges={"muon"};
 
     //over all ranges
     for(int i=0;i<channel_ranges.size();i++){
@@ -495,8 +495,8 @@ void puppiplotter()
       rebinned_hist_CHS= rebin(bins_x,hist_CHS,rebinned_hist_CHS,channel_ranges[i], "");
       //gaussian fit
       TH1F *result_mean , *result_mean_CHS ;
-      result_mean = new TH1F("result_mean","",10,bins_x);
-      result_mean_CHS = new TH1F("result_mean_CHS","",10,bins_x);
+      result_mean = new TH1F("result_mean","",20,bins_x);
+      result_mean_CHS = new TH1F("result_mean_CHS","",20,bins_x);
       result_mean= gaussianfit(rebinned_hist,channel_ranges[i],"",result_mean );
       result_mean_CHS= gaussianfit(rebinned_hist_CHS,channel_ranges[i],"",result_mean_CHS );
       // TCanvas *test= new TCanvas("test","Result Efficiency",10,10,1000,1000);
@@ -507,31 +507,46 @@ void puppiplotter()
 
       // // ////////////////////             read in Histogramms nominator       /////////////////////////////////////////////////////////////
 
+      std::cout<<" "<<hist_name<<std::endl;
+      hist_name="DY_output/rms_ZP";
+      if(berror) std::cout<<"DY::Response read in Hists "<<hist_name<<std::endl;
+      TH2F* hist_matched = (TH2F*)DY_f->Get(hist_name);
+      TH2F* hist_CHS_matched = (TH2F*)DY_CHS_f->Get(hist_name);
+     
+      Double_t bins_x2[26]={0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50};
+      //rebin hists
+      TH2F *rebinned_hist_matched, *rebinned_hist_matched_CHS;
+      rebinned_hist_matched= rebin(bins_x2,hist_matched ,rebinned_hist_matched,channel_ranges[i],"");
+      rebinned_hist_matched_CHS= rebin(bins_x,hist_CHS_matched ,rebinned_hist_matched_CHS,channel_ranges[i], "");
+      //gaussian fit
+      TH1F *result_matched_rms , *result_matched_rms_CHS ;
+      result_matched_rms = new TH1F("result_matched_rms","",20,bins_x);
+      result_matched_rms_CHS = new TH1F("result_matched_rms_CHS","",20,bins_x);
+      result_matched_rms= gaussianfit(rebinned_hist_matched,channel_ranges[i],"",result_matched_rms,true );
+      result_matched_rms_CHS= gaussianfit(rebinned_hist_matched_CHS,channel_ranges[i],"",result_matched_rms_CHS,true );
+ 
+      TCanvas *test= new TCanvas("test","Result Efficiency",10,10,1000,1000);
+       test->Clear();
+       test->cd();
+       result_mean->Draw();
+       // hist->Draw("colz");
+       test->Print("test.eps");
 
-      // hist_name="DY_output/rms_ZP";
-      // if(berror) std::cout<<"DY::Response read in Hists "<<hist_name<<std::endl;
-      // TH2F* hist_matched = (TH2F*)DY_f->Get(hist_name);
-      // TH2F* hist_CHS_matched = (TH2F*)DY_CHS_f->Get(hist_name);
-      // //rebin hists
-      // TH2F *rebinned_hist_matched, *rebinned_hist_matched_CHS;
-      // rebinned_hist_matched= rebin(bins_x,hist,rebinned_hist_matched,channel_ranges[i],"");
-      // rebinned_hist_matched_CHS= rebin(bins_x,hist_CHS,rebinned_hist_matched_CHS,channel_ranges[i], "");
-      // //gaussian fit
-      // TH1F *result_matched_rms , *result_matched_rms_CHS ;
-      // result_matched_rms = new TH1F("result_matched_rms","",10,bins_x);
-      // result_matched_rms_CHS = new TH1F("result_matched_rms_CHS","",10,bins_x);
-      // result_matched_rms= gaussianfit(rebinned_hist,channel_ranges[i],"",result_matched_rms,true );
-      // result_matched_rms_CHS= gaussianfit(rebinned_hist_CHS,channel_ranges[i],"",result_matched_rms_CHS,true );
-
+       TCanvas *test2= new TCanvas("test2","Result Efficiency2",10,10,1000,1000);
+       test2->Clear();
+       test2->cd();
+       result_matched_rms->Draw();
+       //hist_matched->Draw("colz");
+       test2->Print("test2.eps");
             
       //  divide both hists
-      // TGraphAsymmErrors* eff = new TGraphAsymmErrors(result_mean , result_mean, "cl=0.683 b(1,1) mode" );
-      // TGraphAsymmErrors* eff_CHS = new TGraphAsymmErrors( result_matched_rms_CHS,result_mean_CHS , "cl=0.683 b(1,1) mode" );
+      TGraphAsymmErrors* eff = new TGraphAsymmErrors(result_matched_rms , result_mean, "cl=0.683 b(1,1) mode" );
+      //   TGraphAsymmErrors* eff_CHS = new TGraphAsymmErrors( result_matched_rms_CHS,result_mean_CHS , "cl=0.683 b(1,1) mode" );
       
       
-      // TCanvas *result_eff_c= new TCanvas("result_eff_c","Result Efficiency",10,10,1000,1000);
-      // result_eff_c->Clear();
-      // result_eff_c->cd();
+      TCanvas *result_eff_c= new TCanvas("result_eff_c","Result Efficiency",10,10,1000,1000);
+      result_eff_c->Clear();
+      result_eff_c->cd();
       // eff->SetMaximum(1.01);
       // eff->SetTitle("");
       // //X Axis, Min, Max
@@ -553,8 +568,8 @@ void puppiplotter()
       // if(eff_ranges[j]=="Efficiency_Gen")eff->GetYaxis()->SetTitle("Efficiency");
       // if(eff_ranges[j]=="Purity_Reco")eff->GetYaxis()->SetTitle("Purity");
       // eff->GetYaxis()->SetTitleOffset(1.4);
-      // //Draw()
-      // eff->Draw("AP");
+      //Draw()
+      eff->Draw("AP");
       // eff_CHS->SetLineColor(kGreen);
       // eff_CHS->SetMarkerColor(kGreen);
       // eff_CHS->Draw("same");
@@ -568,14 +583,14 @@ void puppiplotter()
       // leg->AddEntry(eff,"Puppi","lpe");
       // leg->Draw();
       
-      // //save
-      // result_eff_c->Print(output_folder+folder+"/"+ak_ranges[i]+"_"+eff_ranges[j]+"_"+var_ranges[k]+".eps");
-      // result_eff_c->Destructor();
+      //save
+      result_eff_c->Print(output_folder+folder+"/rms_upar.eps");
+      result_eff_c->Destructor();
       // hist_c->Destructor();
       // hist_matched_c->Destructor();
       
       
-      ////Bis hier 
+      // ////Bis hier 
 
 
 

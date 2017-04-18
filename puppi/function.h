@@ -11,11 +11,12 @@ TH1F* gaussianfit(TH2F *rebinned_hist,TString channel_ranges,TString sel_ranges,
   TH1D *gaussian_CHS;
   TCanvas *c3= new TCanvas("c3","gaussian hist",10,10,700,900);
   TCanvas *gaussian_c = new TCanvas("gaussian_c","gaussian fit",10,10,700,900);
-
+  if(berror)std::cout<<"in Gaussian fit" <<std::endl;
   for (int p=1; p<=rebinned_hist->GetXaxis()->GetNbins();p++) {
     gaussian = rebinned_hist->ProjectionY("_y",p,p+1);
-    if(brms)result_mean->SetBinContent(p,gaussian_CHS->GetRMS());
-    if(brms)result_mean->SetBinError(p,gaussian_CHS->GetRMSError());
+
+    if(brms)result_mean->SetBinContent(p,gaussian->GetRMS());
+    if(brms)result_mean->SetBinError(p,gaussian->GetRMSError());
     if (berror){  
       std::cout<<"slice  "<<p<<std::endl;
       c3->Clear();
@@ -68,7 +69,7 @@ TH1F* gaussianfit(TH2F *rebinned_hist,TString channel_ranges,TString sel_ranges,
 
 TH2F* rebin(Double_t *bins_x,TH2F *hist,TH2F *rebinned_hist,  TString channel_ranges, TString sel_ranges ){
   
-  rebinned_hist = new TH2F("rebinned",hist->GetTitle(),10,bins_x,200,-1,1);
+  rebinned_hist = new TH2F("rebinned",hist->GetTitle(),20,bins_x,200,-1,1);
     
   TAxis *xaxis = hist->GetXaxis();
   TAxis *yaxis = hist->GetYaxis();
