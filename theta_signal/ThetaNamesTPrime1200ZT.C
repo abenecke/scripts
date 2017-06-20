@@ -21,7 +21,7 @@ void ThetaNamesTPrime1200ZT()
 
   
   for(int j=0; j<Nsyst; ++j){
-    TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/chsvspuppi";
+    TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/tau21/tau055";
     if(systname[j]!="default"){
       directory += systname[j];
       directory +="_";
@@ -29,7 +29,7 @@ void ThetaNamesTPrime1200ZT()
     }
     std::cout<< directory <<std::endl;
 
-    TString outfilename = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/chsvspuppi/theta_histograms_MZPrime";
+    TString outfilename = directory + "/theta_histograms_MZPrime";
     if(systname[j]!="default"){
       outfilename += systname[j];
       outfilename +="_";
@@ -100,9 +100,9 @@ Double_t zwnotop[36]={600, 660, 720, 780, 840, 900, 960, 1020, 1080, 1140, 1200,
        // 	 cout << hist->GetXaxis()->GetBinLowEdge(i) << ", ";}
       ////////////////////////////////////////////////////////////////////////////////////////
       TH1F* M_higgstop_one_btag_old = (TH1F*)infile->Get("one_higgs_top_chi2min_chi2cut/M_ZPrime_rec");
-      //      Double_t higgtop_one_btag[2]={600,3000};//chi2cut
-      Double_t higgtop_one_btag[29]={600, 1020, 1080, 1140, 1200, 1260, 1320, 1380, 1440, 1500, 1560, 1620, 1680, 1740, 1800, 1860, 1920, 1980, 2040, 2100, 2160, 2220, 2280, 2340, 2460,  2580,  2700,  2820, 2940};//chi2cu
-      TH1F* M_higgstop_one_btag =  (TH1F*) M_higgstop_one_btag_old->Rebin(28,"M_higgstop_one_btag",higgtop_one_btag);
+      
+      Double_t higgtop_one_btag[29]={600, 1020, 1080, 1140, 1200, 1260, 1320, 1380, 1440, 1500, 1560, 1620, 1680, 1740, 1800, 1860, 1920, 1980, 2040, 2100, 2160, 2220, 2280, 2340, 2460,  2580,  2700,  2820, 2940};// tau21 <0.5
+      TH1F* M_higgstop_one_btag =  (TH1F*) M_higgstop_one_btag_old->Rebin(28,"M_higgstop_one_btag",higgtop_one_btag); //tau21 < 0.5
       
       ////////////////////////////////////////////////////////////////////////////////////////
          

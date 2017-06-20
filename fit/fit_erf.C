@@ -6,10 +6,11 @@ using namespace std;
 void fit_erf()
 {
   
+  gROOT->SetBatch(kTRUE);
   bool b_error=true;
   TString unc_name = ""; // "jersmear_up" , "jersmear_down" ,"jecsmear_up" , "jecsmear_down" , "none"
-  TString mistag_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/mass/hists/";
-  TString folder ="erf/lowpt_";
+  TString mistag_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/pictures/mistag/";
+  TString folder ="erf/test_";
   // TString folder ="~/ownCloud/masterarbeit/tex/plots/efficiency/master_";
   TString unc_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/efficiency/hists";
 
@@ -19,11 +20,13 @@ void fit_erf()
   gStyle->SetOptStat(0);
 
   //All files are read in
-  TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/efficiency_lowpt200-400"+unc_name;
+  TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/uncertainties/eff/"+unc_name;
   TString bkgfolder = "";
   TFile * data_f = new TFile(directory+"/uhh2.AnalysisModuleRunner.Data.Data.root", "READ");
-  TFile * TTbar_matched_f = new TFile(directory+"/uhh2.AnalysisModuleRunner.MC.TTbar_right.root", "READ");
-  TFile * TTbar_unmatched_f = new TFile(directory+bkgfolder+"/uhh2.AnalysisModuleRunner.MC.TTbar_wrong.root", "READ");
+  // TFile * TTbar_matched_f = new TFile(directory+"/uhh2.AnalysisModuleRunner.MC.TTbar_right.root", "READ");
+  // TFile * TTbar_unmatched_f = new TFile(directory+bkgfolder+"/uhh2.AnalysisModuleRunner.MC.TTbar_wrong.root", "READ");
+  TFile * TTbar_matched_f = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/eff_Dr04/uhh2.AnalysisModuleRunner.MC.TTbar_right.root", "READ");
+  TFile * TTbar_unmatched_f = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/eff_Dr12/uhh2.AnalysisModuleRunner.MC.TTbar_wrong.root", "READ");
   TFile * WJets_f = new TFile(directory+bkgfolder+"/uhh2.AnalysisModuleRunner.MC.WJets.root", "READ");
   TFile * other_f = new TFile(directory+bkgfolder+"/uhh2.AnalysisModuleRunner.MC.other.root", "READ");
   TFile * QCD_f = new TFile(directory+bkgfolder+"/uhh2.AnalysisModuleRunner.MC.QCD.root", "READ");
@@ -49,7 +52,7 @@ void fit_erf()
 
 
 
-  TTbar_unmatched->SetXTitle("M_{W}^{rec} [GeV/c^{2}]");
+  TTbar_unmatched->SetXTitle("M_{W}^{rec} [GeV]");
   TTbar_unmatched->SetYTitle("Events");
   TTbar_unmatched->SetTitleSize(0.045);
   TTbar_unmatched->GetYaxis()->SetTitleSize(0.045);
@@ -69,7 +72,8 @@ void fit_erf()
   back->Add(QCD);
 
   /////////////////////////   Fit function (Background)  ////////////////////////
-  TF1* background_fit = new TF1("background_fit", " [0]*(1 - TMath::Erf((x-[1])/(1.4*[2])))", 24, 182);
+   TF1* background_fit = new TF1("background_fit", " [0]*(1 - TMath::Erf((x-[1])/(1.4*[2])))", 40, 160);
+  //  TF1* background_fit = new TF1("background_fit", " [0]*(1 - TMath::Erf((x-[1])/(1.4*[2])))", 50, 155);
   background_fit->SetParameter(0, 4);
   background_fit->SetParameter(1, 100);
   background_fit->SetParameter(2, 20);
@@ -87,9 +91,10 @@ void fit_erf()
 
 
   TString info = "unmatched t#bar{t} events";
-  TString info2 = "24 GeV < m_{W} < 182 GeV";
+  TString info2 = "40 GeV < m_{W} < 182 GeV";
   //  TString info3 = "f(x) = p0 erf #left(#frac{x-p1}{p2}#right)";
   TString info3 = "bkg(x) = p0 * erf((x-p1)/p2)";
+  TString info4 = "(matching parameter 1.2)";
   TLatex* text = new TLatex();
   text->SetTextFont(62);
   text->SetNDC();
@@ -103,6 +108,7 @@ void fit_erf()
   text2->SetTextSize(0.035);
   text2->DrawLatex(0.15, 0.79, info3.Data());
   text2->DrawLatex(0.15, 0.75, info2.Data());
+   text2->DrawLatex(0.15, 0.71, info4.Data());
 
 
 
@@ -118,7 +124,7 @@ void fit_erf()
   gPad->SetTicky();
   signal_c->Clear();
   signal_c->cd();
-  TTbar_matched->SetXTitle("M_{W}^{rec} [GeV/c^{2}]");
+  TTbar_matched->SetXTitle("M_{W}^{rec} [GeV]");
   TTbar_matched->SetYTitle("Events");
   TTbar_matched->SetTitleSize(0.045);
   TTbar_matched->GetYaxis()->SetTitleSize(0.045);
@@ -132,7 +138,9 @@ void fit_erf()
   TTbar_matched->Draw("PZ");
 
   /////////////////////////   Fit function (Signal)  ////////////////////////
-  TF1 *signal_fit = new TF1("signal_fit","TMath::Voigt(x-[2], [0], [1], 4)*[3]", 70, 120);
+  // TF1 *signal_fit = new TF1("signal_fit","TMath::Voigt(x-[2], [0], [1], 4)*[3]", 80, 110); //modified
+  // TF1 *signal_fit = new TF1("signal_fit","TMath::Voigt(x-[2], [0], [1], 4)*[3]", 80, 110); //original
+  TF1 *signal_fit = new TF1("signal_fit","TMath::Voigt(x-[2], [0], [1], 4)*[3]", 75, 110); //original
   signal_fit->SetParameter(0, 10);
   signal_fit->FixParameter(1, 2.09);
   signal_fit->SetParameter(2, 92);
@@ -150,6 +158,7 @@ void fit_erf()
   info2 = "24 GeV < m_{W} < 182 GeV";
   //  TString info3 = "f(x) = p0 erf #left(#frac{x-p1}{p2}#right)";
   info3 = "sig(x) = p3 * Voigt(x-p2,p0)";
+  info4 = "(matching parameter 0.4)";
   text->SetTextFont(62);
   text->SetNDC();
   text->SetTextColor(kRed+1);
@@ -162,6 +171,7 @@ void fit_erf()
   text2->SetTextSize(0.035);
   text2->DrawLatex(0.15, 0.79, info3.Data());
   text2->DrawLatex(0.15, 0.75, info2.Data());
+  text2->DrawLatex(0.15, 0.71, info4.Data());
 
   TH1D* all = (TH1D*)TTbar_matched->Clone();
   all->Add(back);
@@ -186,7 +196,7 @@ void fit_erf()
 
   // TH1D* all = (TH1D*)TTbar_matched->Clone();
   // all->Add(back);
-  all->SetXTitle("M_{W}^{rec} [GeV/c^{2}]");
+  all->SetXTitle("M_{W}^{rec} [GeV]");
   all->SetYTitle("Events");
   all->SetTitleSize(0.045);
   all->GetYaxis()->SetTitleSize(0.045);
@@ -199,7 +209,9 @@ void fit_erf()
   all->Draw("PZ");
 
   /////////////////////////   Fit function (Signal+background)  ////////////////////////
-  TF1 *signal_background_fit = new TF1("signal_background_fit","signal_fit + background_fit", 24,182);
+  //  TF1 *signal_background_fit = new TF1("signal_background_fit","signal_fit + background_fit", 24,182);//original
+  //  TF1 *signal_background_fit = new TF1("signal_background_fit","signal_fit + background_fit", 30,160); //2 pt bins
+  TF1 *signal_background_fit = new TF1("signal_background_fit","signal_fit + background_fit", 40,184);
 
   //Signal
   signal_background_fit->SetParameter(0, signal_fit->GetParameter(0));
@@ -240,7 +252,8 @@ void fit_erf()
   bc->DrawClone("same");
 
   info = " t#bar{t} events";
-  info2 = "24 GeV < m_{W} < 182 GeV";
+  // info2 = "24 GeV < m_{W} < 182 GeV";
+  info2 = "40 GeV < m_{W} < 182 GeV";
   //  TString info3 = "f(x) = p0 erf #left(#frac{x-p1}{p2}#right)";
   info3 = "f(x) = sig(x) + bkg(x)";
   text->SetTextFont(62);
@@ -269,7 +282,7 @@ void fit_erf()
   data_c->Clear();
   data_c->cd();
 
-  data->SetXTitle("M_{W}^{rec} [GeV/c^{2}]");
+  data->SetXTitle("M_{W}^{rec} [GeV]");
   data->SetYTitle("Events");
   data->SetTitleSize(0.045);
   data->GetYaxis()->SetTitleSize(0.045);
@@ -283,7 +296,8 @@ void fit_erf()
   data->Draw("PZ");
 
   /////////////////////////   Fit function (Data)  ////////////////////////
-  TF1* data_fit = new TF1("data_fit","signal_fit+background_fit" , 24, 182);
+  // TF1* data_fit = new TF1("data_fit","signal_fit+background_fit" , 24, 182);//original
+  TF1* data_fit = new TF1("data_fit","signal_fit+background_fit" ,40,182);
 
   Double_t sc = data->Integral() / all->Integral();
   //signal
@@ -319,7 +333,8 @@ void fit_erf()
   bc->DrawClone("same");
 
   info = " data events";
-  info2 = "24 GeV < m_{W} < 182 GeV";
+  // info2 = "24 GeV < m_{W} < 182 GeV";
+  info2 = "40 GeV < m_{W} < 182 GeV";
   //  TString info3 = "f(x) = p0 erf #left(#frac{x-p1}{p2}#right)";
   info3 = "f(x) = sig(x) + bkg(x)";
   text->SetTextFont(62);
@@ -355,8 +370,8 @@ void fit_erf()
   MC_Eff_f->SetParameter(3, signal_background_fit->GetParameter(3));
  
   MC_Eff_f->Draw();
-  MC_Eff_f->GetHistogram()->GetXaxis()->SetTitle("M_{W}^{rec} [GeV/c^{2}]");
-  MC_Eff_f->GetHistogram()->SetXTitle("M_{W}^{rec} [GeV/c^{2}]");
+  MC_Eff_f->GetHistogram()->GetXaxis()->SetTitle("M_{W}^{rec} [GeV]");
+  MC_Eff_f->GetHistogram()->SetXTitle("M_{W}^{rec} [GeV]");
   MC_Eff_f->GetHistogram()->SetYTitle("Events");
   MC_Eff_f->GetHistogram()->SetTitleSize(0.045);
   MC_Eff_f->GetHistogram()->GetYaxis()->SetTitleSize(0.045);
@@ -393,7 +408,7 @@ void fit_erf()
   MC_back_f->SetLineColor(kBlue+1);
   MC_back_f->Draw("");
 
-  MC_back_f->GetHistogram()->SetXTitle("M_{W}^{rec} [GeV/c^{2}]");
+  MC_back_f->GetHistogram()->SetXTitle("M_{W}^{rec} [GeV]");
   MC_back_f->GetHistogram()->SetYTitle("Events");
   MC_back_f->GetHistogram()->SetTitleSize(0.045);
   MC_back_f->GetHistogram()->GetYaxis()->SetTitleSize(0.045);
@@ -688,7 +703,7 @@ void fit_erf()
       if(j==4)  varied_par_MC = (pars_MC[j]-2) + pars_MC[j]/1000000 * i;
       if(j==5)  varied_par_MC = (pars_MC[j]-10) + pars_MC[j]/10000 * i;
       if(j==6)  varied_par_MC = (pars_MC[j]-10) + pars_MC[j]/10000 * i;
-      
+      //  double varied_par_MC = pars_MC[j]-0.5*pars_MC[j] + pars_MC[j]/100000 * i;
       //original double varied_par_MC = -20*pars_MC[j] + pars_MC[j]/1000 * i;
       f_NewParam_MC_error->FixParameter(j,varied_par_MC);
      
@@ -697,11 +712,13 @@ void fit_erf()
       double chi2_tmp_MC = f_NewParam_MC_error->GetChisquare();
       chi2_diff_MC = chi2_tmp_MC - chi2_best_MC;
 
-      if(i%500 == 0) cout << "\r"  << for_percent/3500  << "%, " <<  "Parameter " << j << ", Fit No. " << i  << ", current chi2: " << chi2_tmp_MC << " at current parametervalue: " << varied_par_MC << "           "  << flush;
-      // if(i%500 == 0) if(j==0)cout << "\r"  << for_percent/3500  << "%, " <<  "Parameter " << j << ", Fit No. " << i  << ", current chi2: " << chi2_tmp_MC << " at current parametervalue: " << varied_par_MC << "           "  << endl;
+      //  if(i%500 == 0) cout << "\r"  << for_percent/3500  << "%, " <<  "Parameter " << j << ", Fit No. " << i  << ", current chi2: " << chi2_tmp_MC << " at current parametervalue: " << varied_par_MC << "           "  << flush;
+      if(i%500 == 0) if(j==0)cout << "\r"  << for_percent/3500  << "%, " <<" Param Value "<<pars_MC[j]<<  " Parameter " << j << ", Fit No. " << i  << ", current chi2: " << chi2_tmp_MC << " at current parametervalue: " << varied_par_MC << "           "  << endl;
 
       if(!pars_dn_set_MC[j] && chi2_diff_MC < 1) {
   	pars_dn_MC[j] = varied_par_MC_old;
+	//	pars_dn_MC[j] = pars_MC[j] -0.5*pars_MC[j] + pars_MC[j]/100000 * (i-1);
+	//	pars_dn_MC[j] = pars_MC[j]-0.2*pars_MC[j] + pars_MC[j]/1000000 * (i-1);
   	pars_dn_set_MC[j] = true;
       }
       if(pars_dn_set_MC[j] && !pars_up_set_MC[j] && chi2_diff_MC >= 1){
@@ -882,7 +899,7 @@ void fit_erf()
   leg->SetBorderSize(0);
 
 
-  f_NewParam_MC->GetXaxis()->SetTitle("M_{W}^{rec} [GeV/c^{2}]");
+  f_NewParam_MC->GetXaxis()->SetTitle("M_{W}^{rec} [GeV]");
   f_NewParam_MC->GetYaxis()->SetTitle("Events");
   f_NewParam_MC->GetXaxis()->SetTitleSize(0.045);
   f_NewParam_MC->GetYaxis()->SetTitleSize(0.045);
@@ -1240,9 +1257,9 @@ void fit_erf()
   myfile << "all down variations quadraticly added: -"<<TMath::Sqrt(all_down)<<endl;
 
   // read in histogramm from mistag rate depending on nominal,up,down and correction
-  TFile* file = new TFile(mistag_folder+"QCD_"+unc_name+".root", "READ");
-  if(unc_name.Contains("btag"))file = new TFile(mistag_folder+"QCD_"+"none"+".root", "READ");
-  if(unc_name.Contains("sub"))file = new TFile(mistag_folder+"QCD_"+"none"+".root", "READ");
+  TFile* file = new TFile(mistag_folder+"QCD_none.root", "READ");
+  if(unc_name.Contains("btag"))file = new TFile(mistag_folder+"QCD_none.root", "READ");
+  if(unc_name.Contains("sub"))file = new TFile(mistag_folder+"QCD_none.root", "READ");
   TH1F* sf_hist = (TH1F*) file->Get("tot_eff_h");
   Double_t sf = sf_hist->GetBinContent(1);
   
@@ -1685,7 +1702,7 @@ void fit_erf()
   leg = new TLegend(0.6,0.4,0.89,0.89);
   leg->SetBorderSize(0);
   
-  f_NewParam_data->GetXaxis()->SetTitle("M_{W}^{rec} [GeV/c^{2}]");
+  f_NewParam_data->GetXaxis()->SetTitle("M_{W}^{rec} [GeV]");
   f_NewParam_data->GetYaxis()->SetTitle("Events");
   f_NewParam_data->GetXaxis()->SetTitleSize(0.045);
   f_NewParam_data->GetYaxis()->SetTitleSize(0.045);
@@ -2094,7 +2111,7 @@ void fit_erf()
   cout << "sf_eff "<< sf_eff << endl;
   tot_eff_h->Fill(1,sf_eff);
   tot_eff_h->Write();
-  if(unc_name == "none"){
+  // if(unc_name == "none"){
     TH1F *tot_err_up_h = new TH1F("tot_err_up_h","tot error",1,1,2);
     Double_t sf_eff_err_up = TMath::Sqrt(TMath::Power((1/(num_MC_after/num_MC_before)) * error_data_up/(num_data_after/num_data_before),2) +TMath::Power(sf_eff/(num_MC_after/num_MC_before) *  error_MC_up/(num_MC_after/num_MC_before)  ,2) );
     tot_err_up_h->Fill(1,sf_eff_err_up);
@@ -2107,9 +2124,9 @@ void fit_erf()
 
     myfile<<"sf_eff_err_up  "<<sf_eff_err_up<<endl;
     myfile<<"sf_eff_err_down  "<<sf_eff_err_down<<endl;
-  }
+    //  }
   g->Close();
-
+  
   myfile<< "sf_eff "<< sf_eff << endl;
  
 

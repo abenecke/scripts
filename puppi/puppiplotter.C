@@ -6,10 +6,11 @@
 using namespace std;
 
 
-bool berror=true; 
+bool berror=false; 
+bool bCHS=false;
 TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/";
 TString output_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/pictures/";
-TString folder="puppi_test";
+TString folder="puppi_92";
 
 #include "function.h"
 
@@ -20,9 +21,9 @@ void puppiplotter()
   gStyle->SetOptStat(0);
   gROOT->SetBatch(kTRUE);
   // if(berror)gROOT->SetBatch(kFALSE);
-  bool bQCD=false;
+  bool bQCD=true;
   bool bGamma=false;
-  bool bDY=true;
+  bool bDY=false;
   bool bscale=true;
   bool beff=true;
 
@@ -30,8 +31,21 @@ void puppiplotter()
 
   if(bQCD){
     //read in all Files: QCD
-    TFile *QCD_f = new TFile(directory+folder+"/uhh2.AnalysisModuleRunner.MC.QCD.root", "READ");
-    TFile *QCD_CHS_f = new TFile(directory+folder+"/uhh2.AnalysisModuleRunner.MC.MC_QCD_CHS.root", "READ");
+    TFile *QCD_f = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/puppi_test/uhh2.AnalysisModuleRunner.MC.QCD_8_0.root", "READ");
+    TString legend_name1 = "Puppi 80";
+    // TFile *QCD_CHS_f = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/puppi_usedzcutfalse/uhh2.AnalysisModuleRunner.MC.QCD.root", "READ");
+    // TString legend_name2 = "Puppi 80 UseDZCut=False";
+    // TFile *QCD_CHS_f = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/puppi_test/uhh2.AnalysisModuleRunner.MC.QCD_puppicentral.root", "READ");
+    // TString legend_name2 = "Puppi 80 Central";
+    // TFile *QCD_CHS_f = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/puppi_test/uhh2.AnalysisModuleRunner.MC.QCD_9_1.root", "READ");
+    // TString legend_name2 = "Puppi 91";
+    TFile *QCD_CHS_f = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/puppi_test/uhh2.AnalysisModuleRunner.MC.QCD_9_2.root", "READ");
+    TString legend_name2 = "Puppi 92";
+    // TFile *QCD_CHS_f = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/puppi_test/uhh2.AnalysisModuleRunner.MC.MC_QCD_CHS.root", "READ");
+    // TString legend_name2 = "CHS 80";
+    std::vector<TString> legend_names = {legend_name1,legend_name2};
+    //   TFile *QCD_CHS_f = new TFile(directory+folder+"/uhh2.AnalysisModuleRunner.MC.MC_QCD_CHS.root", "READ");
+    //  TFile *QCD_CHS_f = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/puppi_test/uhh2.AnalysisModuleRunner.MC.MC_QCD_CHS.root", "READ");
     TFile *Result_f = new TFile(output_folder+folder+"/uhh2.AnalysisModuleRunner.MC.Result.root", "RECREATE");
     ///////////////////////      Jet PT Scale       ////////////////////////////////////////////////
     if(berror) std::cout<<"JetPTScale "<<std::endl;
@@ -45,11 +59,12 @@ void puppiplotter()
     std::vector<TString> var_ranges={"JetEta", "JetPt","JetNPV"};
     std::vector<TString> scale_ranges={"TopJetMassScale_","TopJetMassScale_GEV_"};
 
-    //  std::vector<TString>  eta_ranges={"Eta0to1p3"};
+    //   std::vector<TString>  eta_ranges={"Eta0to1p3","Eta2p5to3"};
     // std::vector<TString> pt_ranges={"30to40"};
     // std::vector<TString> ak_ranges={"jet"};
     // std::vector<TString> eff_ranges={"Efficiency_Gen"};
-    //    std::vector<TString> var_ranges={"JetNPV"};
+    // std::vector<TString> var_ranges={"JetEta"};
+    // std::vector<TString> scale_ranges={"TopJetMassScale_"};
 
     if(bscale){
       for(int i=0;i<ak_ranges.size();i++){
@@ -100,24 +115,39 @@ void puppiplotter()
 	      TH1F *result_rms_CHS = results_CHS[1];
 	      TH1F *rms_CHS = results_CHS[2];
 
+	      if(bCHS){
+		std::vector<TH1F*> results_CHS_wjec = gaussianfit( bins_x,   ranges ,rebinned_hist_CHS_wjec, "_wjec" );
+		TH1F *result_mean_CHS_wjec = results_CHS_wjec[0];
+		TH1F *result_rms_CHS_wjec = results_CHS_wjec[1];
+		TH1F *rms_CHS_wjec = results_CHS_wjec[2];
 
-	      std::vector<TH1F*> results_CHS_wjec = gaussianfit( bins_x,   ranges ,rebinned_hist_CHS_wjec, "_wjec" );
-	      TH1F *result_mean_CHS_wjec = results_CHS_wjec[0];
-	      TH1F *result_rms_CHS_wjec = results_CHS_wjec[1];
-	      TH1F *rms_CHS_wjec = results_CHS_wjec[2];
-   
-	      ////////////////////////////////////////////////////////////////////////////////////////  Save Result mean   //////////////////////////////////////////////////////////////////
-	      std::vector<TH1F*> mean_results = {result_mean,result_mean_CHS,result_mean_CHS_wjec};
-	      if(ak_ranges[i]=="jet")  save_result(1, -1,"NPV", "Mean ((P_{T,reco} - P_{T,gen} )/P_{T,gen} )",mean_results, ranges,"mean");
-	      if(ak_ranges[i]=="topjet" &&scale_ranges[l]=="TopJetMassScale_GEV_" ) save_result(20, -20,"NPV", "Mean (M_{T,reco} - M_{T,gen} ) [GeV]",mean_results, ranges,"mean");
-	      if(ak_ranges[i]=="topjet" &&!(scale_ranges[l]=="TopJetMassScale_GEV_")  ) save_result(20, -20,"NPV", "Mean ((M_{T,reco} - M_{T,gen} )/M_{T,gen} )", mean_results,   ranges,"mean");
+		////////////////////////////////////////////////////////////////////////////////////////  Save Result mean   //////////////////////////////////////////////////////////////////
+		std::vector<TH1F*> mean_results = {result_mean,result_mean_CHS,result_mean_CHS_wjec};
+		if(ak_ranges[i]=="jet")  save_result(1, -1,"NPV", "Mean ((P_{T,reco} - P_{T,gen} )/P_{T,gen} )",mean_results, ranges,legend_names,"mean");
+		if(ak_ranges[i]=="topjet" &&scale_ranges[l]=="TopJetMassScale_GEV_" ) save_result(20, -40,"NPV", "Mean (M_{T,reco} - M_{T,gen} ) [GeV]",mean_results, ranges,legend_names,"mean");
+		if(ak_ranges[i]=="topjet" &&!(scale_ranges[l]=="TopJetMassScale_GEV_")  ) save_result(20, -25,"NPV", "Mean ((M_{T,reco} - M_{T,gen} )/M_{T,gen} )", mean_results,   ranges,legend_names,"mean");
 	     
-	      ////////////////////////////////////////////////////////////////////////////////////////  Save Result rms   //////////////////////////////////////////////////////////////////
-	      std::vector<TH1F*> rms_results = {result_rms,result_rms_CHS,rms,rms_CHS,result_rms_CHS_wjec,rms_CHS_wjec};
-	      if(ak_ranges[i]=="jet")  save_result(0.6,0,"NPV", "Rms ((P_{T,reco} - P_{T,gen} )/P_{T,gen} )",rms_results, ranges,"rms");
-	      if(ak_ranges[i]=="topjet" &&scale_ranges[l]=="TopJetMassScale_GEV_" ) save_result(20,0,"NPV", "Rms (M_{T,reco} - M_{T,gen} ) [GeV]", rms_results,  ranges,"rms");
-	      if(ak_ranges[i]=="topjet"&&scale_ranges[l]=="TopJetMassScale_")save_result(2,0,"NPV", "Rms (M_{T,reco} - M_{T,gen} ) [GeV]", rms_results, ranges,"rms");
+		////////////////////////////////////////////////////////////////////////////////////////  Save Result rms   //////////////////////////////////////////////////////////////////
+		std::vector<TH1F*> rms_results = {result_rms,result_rms_CHS,rms,rms_CHS,result_rms_CHS_wjec,rms_CHS_wjec};
+		if(ak_ranges[i]=="jet")  save_result(0.6,0,"NPV", "Rms ((P_{T,reco} - P_{T,gen} )/P_{T,gen} )",rms_results, ranges,legend_names,"rms");
+		if(ak_ranges[i]=="topjet" &&scale_ranges[l]=="TopJetMassScale_GEV_" ) save_result(20,0,"NPV", "Rms (M_{T,reco} - M_{T,gen} ) [GeV]", rms_results,  ranges,legend_names,"rms");
+		if(ak_ranges[i]=="topjet"&&scale_ranges[l]=="TopJetMassScale_")save_result(2,0,"NPV", "Rms (M_{T,reco} - M_{T,gen} ) [GeV]", rms_results, ranges,legend_names,"rms");
+	      }else{
 
+	
+		////////////////////////////////////////////////////////////////////////////////////////  Save Result mean   //////////////////////////////////////////////////////////////////
+		std::vector<TH1F*> mean_results = {result_mean,result_mean_CHS};
+		if(ak_ranges[i]=="jet")  save_result(1, -1,"NPV", "Mean ((P_{T,reco} - P_{T,gen} )/P_{T,gen} )",mean_results, ranges,legend_names,"mean");
+		if(ak_ranges[i]=="topjet" &&scale_ranges[l]=="TopJetMassScale_GEV_" ) save_result(20, -40,"NPV", "Mean (M_{T,reco} - M_{T,gen} ) [GeV]",mean_results, ranges,legend_names,"mean");
+		if(ak_ranges[i]=="topjet" &&!(scale_ranges[l]=="TopJetMassScale_GEV_")  ) save_result(25, -30,"NPV", "Mean ((M_{T,reco} - M_{T,gen} )/M_{T,gen} )", mean_results,   ranges,legend_names,"mean");
+		std::cout<<"Hier"<<std::endl;
+		////////////////////////////////////////////////////////////////////////////////////////  Save Result rms   //////////////////////////////////////////////////////////////////
+		std::vector<TH1F*> rms_results = {result_rms,result_rms_CHS};
+		if(ak_ranges[i]=="jet")  save_result(0.6,-0.1,"NPV", "Rms ((P_{T,reco} - P_{T,gen} )/P_{T,gen} )",rms_results, ranges,legend_names,"rms");
+		if(ak_ranges[i]=="topjet" &&scale_ranges[l]=="TopJetMassScale_GEV_" ) save_result(20,0,"NPV", "Rms (M_{T,reco} - M_{T,gen} ) [GeV]", rms_results,  ranges,legend_names,"rms");
+		if(eta_ranges[j]=="Eta0to1p3") if(ak_ranges[i]=="topjet"&&scale_ranges[l]=="TopJetMassScale_")save_result(20,-5,"NPV", "Rms (M_{T,reco} - M_{T,gen} ) [GeV]", rms_results, ranges,legend_names,"rms");
+		if(!(eta_ranges[j]=="Eta0to1p3")) if(ak_ranges[i]=="topjet"&&scale_ranges[l]=="TopJetMassScale_")save_result(20,-5,"NPV", "Rms (M_{T,reco} - M_{T,gen} ) [GeV]", rms_results, ranges,legend_names,"rms");
+	      }
 	    }//eta_ranges
 	  }//pt_ranges
 	}//scale_ranges
@@ -144,6 +174,11 @@ void puppiplotter()
 	    //read in Histogramms
 	    TH1F* hist = (TH1F*)QCD_f->Get(hist_name);
 	    TH1F* hist_CHS = (TH1F*)QCD_CHS_f->Get(hist_name); 
+
+	    TCanvas *c1= new TCanvas("c1","hist",10,10,1000,1000);
+	    hist->Draw();
+	    TCanvas *c2= new TCanvas("c2","hist CHS",10,10,1000,1000);
+	    hist_CHS->Draw();
 
 	    //jec correction applied hist with CHS
 	    TString  hist_name_wjec = "uncorrected_";
@@ -173,6 +208,8 @@ void puppiplotter()
 	
 	
 	    TCanvas *result_eff_c= new TCanvas("result_eff_c","Result Efficiency",10,10,1000,1000);
+	    gPad->SetTickx();
+	    gPad->SetTicky();
 	    result_eff_c->Clear();
 	    result_eff_c->cd();
 	    eff->SetMaximum(1.01);
@@ -184,7 +221,7 @@ void puppiplotter()
 	      if(eff_ranges[j]=="Purity_Reco")  eff->GetXaxis()->SetTitle("RecoJetPT");
 	    }
 	    if(var_ranges[k]=="JetEta"){
-	      eff->SetMinimum(0.8);
+	      eff->SetMinimum(0.5);
 	      eff->GetXaxis()->SetRangeUser(-5,5);
 	      if(eff_ranges[j]=="Efficiency_Gen")eff->GetXaxis()->SetTitle("GenJetEta");
 	      if(eff_ranges[j]=="Purity_Reco"){
@@ -200,19 +237,19 @@ void puppiplotter()
 	    eff->Draw("AP");
 	    eff_CHS->SetLineColor(kGreen);
 	    eff_CHS->SetMarkerColor(kGreen);
-	    eff_CHS->Draw("same");
+	    eff_CHS->Draw("same P");
 	    eff_CHS_wjec->SetLineColor(kRed);
 	    eff_CHS_wjec->SetMarkerColor(kRed);
-	    eff_CHS_wjec->Draw("same");
+	    //  eff_CHS_wjec->Draw("same");
 	    //Legend
-	    TLegend *leg = new TLegend(0.35,0.23,0.7,0.13, NULL,"brNDC");
+	    TLegend *leg = new TLegend(0.35,0.33,0.7,0.13, NULL,"brNDC");
 	    if(ak_ranges[i]=="jet")	leg->SetHeader("AK4 Jet Efficiency");
 	    if(ak_ranges[i]=="topjet")	leg->SetHeader("AK8 Efficiency");
 	    leg->SetBorderSize(0);
 	    leg->SetFillStyle(0);
-	    leg->AddEntry(eff_CHS,"CHS","lpe");
-	    leg->AddEntry(eff_CHS_wjec,"CHS w JEC","lpe");
-	    leg->AddEntry(eff,"Puppi","lpe");
+	    leg->AddEntry(eff_CHS,legend_name2,"lpe");
+	    //  leg->AddEntry(eff_CHS_wjec,"CHS w JEC","lpe");
+	    leg->AddEntry(eff,legend_name1,"lpe");
 	    leg->Draw();
 
 	    //save
@@ -285,19 +322,24 @@ void puppiplotter()
     //MET
     TH1F* hist_MET = (TH1F*)QCD_f->Get("jet_input/MET");
     TH1F* hist_CHS_MET = (TH1F*)QCD_CHS_f->Get("jet_input/MET");
-	
+    hist_MET->Scale(1/hist_MET->Integral());
+    hist_CHS_MET->Scale(1/hist_CHS_MET->Integral());
+    // std::cout<<"PUPPI "<< hist_MET->Integral()<<std::endl;	
+    // std::cout<<"CHS "<< hist_CHS_MET->Integral()<<std::endl;
+
     TCanvas *c14 = new TCanvas("c14","uncorrected MET",10,10,1000,1000);
     c14->Clear();
     c14->cd();
+    c14->SetLogy();
     gPad->SetTickx();
     gPad->SetTicky();
-    hist_MET->Draw("E1");
     hist_CHS_MET->SetLineColor(kGreen);
     hist_CHS_MET->SetMarkerColor(kGreen);
-    hist_CHS_MET->Draw("same E1");
+    hist_CHS_MET->Draw("E1");
+    hist_MET->Draw("same E1");
     TLegend *leg_MET = new TLegend(0.65,0.83,0.9,0.73, NULL,"brNDC");
-    leg_MET->AddEntry(hist_MET,"uncorrected MET (Puppi)","lpe");
-    leg_MET->AddEntry(hist_CHS_MET,"uncorrected MET (CHS)","lpe");
+    leg_MET->AddEntry(hist_MET,legend_name1,"lpe");
+    leg_MET->AddEntry(hist_CHS_MET,legend_name2,"lpe");
     leg_MET->SetBorderSize(0);
     leg_MET->SetFillStyle(0);
     leg_MET->Draw();
@@ -345,7 +387,7 @@ void puppiplotter()
     std::vector<TString> sel_ranges={"output","Zptk50","Zptg50"};
     TFile *DY_f,*DY_CHS_f;
 
-    if(berror)channel_ranges={"muon"};
+    if(berror)channel_ranges={"ele"};
 
     //over all ranges
     for(int i=0;i<channel_ranges.size();i++){
@@ -357,13 +399,14 @@ void puppiplotter()
       else if(channel_ranges[i]=="ele"){
 	DY_f = new TFile(directory+folder+"/uhh2.AnalysisModuleRunner.MC.MC_DY_elec.root", "READ");
 	DY_CHS_f = new TFile(directory+folder+"/uhh2.AnalysisModuleRunner.MC.MC_DY_elec_CHS.root", "READ");
+	if(berror) std::cout<<"Histogramms read in"<<std::endl;
       }else std::cout<<"Channel not defined"<<std::endl;
 
       if(berror) std::cout<<"DY::Met"<<std::endl;
       /////////////////////////////////////////////////////                       MET                  ////////////////////////////////////////////////////////////////
-      TH1F* hist_MET = (TH1F*)DY_f->Get("jet_input/MET");
-      TH1F* hist_CHS_MET = (TH1F*)DY_CHS_f->Get("jet_input/MET");
-      
+      TH1F* hist_MET = (TH1F*)DY_f->Get("uncorrected_jet_input/MET");
+      TH1F* hist_CHS_MET = (TH1F*)DY_CHS_f->Get("uncorrected_jet_input/MET");
+     
       TCanvas *c14 = new TCanvas("c14","uncorrected MET",10,10,1000,1000);
       c14->Clear();
       c14->cd();
@@ -375,7 +418,7 @@ void puppiplotter()
       hist_CHS_MET->SetMarkerColor(kGreen);
       hist_CHS_MET->Draw("same E1");
 
-      TPaveText *pt = new TPaveText(.40,.22,.60,.28,"nbNDC");
+      TPaveText *pt = new TPaveText(.60,.32,.80,.38,"nbNDC");
       if(channel_ranges[i] == "ele") pt->AddText("electron channel");
       if(channel_ranges[i] == "muon") pt->AddText("muon channel");
       pt->SetFillColor(0);
@@ -417,14 +460,14 @@ void puppiplotter()
 	if(berror) std::cout<<"DY::rebin Hists "<<hist_name<<std::endl;
 	if(sel_ranges[j]=="output" ){
 	  Double_t bins_x[21]={0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200};
-	  rebinned_hist= rebin(bins_x,hist,rebinned_hist,channel_ranges[i], sel_ranges[j]);
-	  rebinned_hist_CHS= rebin(bins_x,hist_CHS,rebinned_hist_CHS,channel_ranges[i], sel_ranges[j]);
+	  rebinned_hist= rebin(bins_x,hist,rebinned_hist,channel_ranges[i], sel_ranges[j],-1,1);
+	  rebinned_hist_CHS= rebin(bins_x,hist_CHS,rebinned_hist_CHS,channel_ranges[i], sel_ranges[j],-1,1);
 	  result_mean = new TH1F("result_mean","",10,bins_x);
 	  result_mean_CHS = new TH1F("result_mean_CHS","",10,bins_x);
 	}else{
 	  Double_t bins_x[26]={0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50};
-	  rebinned_hist= rebin(bins_x,hist,rebinned_hist,channel_ranges[i], sel_ranges[j]);
-	  rebinned_hist_CHS= rebin(bins_x,hist_CHS,rebinned_hist_CHS,channel_ranges[i], sel_ranges[j]);
+	  rebinned_hist= rebin(bins_x,hist,rebinned_hist,channel_ranges[i], sel_ranges[j],-1,1);
+	  rebinned_hist_CHS= rebin(bins_x,hist_CHS,rebinned_hist_CHS,channel_ranges[i], sel_ranges[j],-1,1);
 	  result_mean = new TH1F("result_mean","",10,bins_x);
 	  result_mean_CHS = new TH1F("result_mean_CHS","",10,bins_x);
 	}
@@ -439,10 +482,11 @@ void puppiplotter()
 	result_mean_c->cd();
 	gPad->SetTickx();
 	gPad->SetTicky();
-	result_mean->SetMaximum(1);
+	result_mean->SetMaximum(1.5);
 	result_mean->SetMinimum(-1);
 	result_mean->GetXaxis()->SetTitle("NVP");
-	result_mean->GetYaxis()->SetTitleOffset(1.4);
+	result_mean->GetYaxis()->SetTitle("Mean of (-u_{||}/Z_{pt})");
+	// result_mean->GetYaxis()->SetTitleOffset(1.1);
 	result_mean->Draw("E1");
 	result_mean_CHS->SetMarkerColor(kGreen);
 	result_mean_CHS->SetLineColor(kGreen);
@@ -450,8 +494,10 @@ void puppiplotter()
 
 	//labels like pt of the jets, eta range
 	TPaveText *pt = new TPaveText(.20,.12,.40,.18,"nbNDC");
-	// if(pt_ranges[k]=="30to40")	pt->AddText("30GeV<P_{T}<40GeV");
-	// if(pt_ranges[k]=="100to150")	pt->AddText("100GeV<P_{T}<150GeV");
+
+	if(sel_ranges[j]=="Zptk50")	pt->AddText("P_{T}<50GeV");
+	if(sel_ranges[j]=="Zptg50")	pt->AddText("50GeV<P_{T}");
+
 	pt->SetFillColor(0);
 	pt->SetTextSize(0.04);
 	pt->Draw();
@@ -466,7 +512,7 @@ void puppiplotter()
 	eta->Draw();
 
 	//Legend
-	TLegend *leg = new TLegend(0.25,0.88,0.5,0.68, NULL,"brNDC");
+	TLegend *leg = new TLegend(0.55,0.48,0.8,0.28, NULL,"brNDC");
 	// if(ak_ranges[i]=="jet")	leg->SetHeader("AK4 Jet P_{T} Scale");
 	// if(ak_ranges[i]=="topjet")	leg->SetHeader("AK8 Jet Mass Scale");
 	leg->SetBorderSize(0);	
@@ -480,9 +526,9 @@ void puppiplotter()
 	result_mean_c->Destructor();
 
       }//sel_ranges j
-    }
+      }
      
-
+      if(false){
       ////////////////            read in Histogramms denominator        //////////////////////////////////////////////////////
       TString  hist_name = "DY_output/response_ZP";
       if(berror) std::cout<<"DY::Response read in Hists "<<hist_name<<std::endl;
@@ -491,12 +537,14 @@ void puppiplotter()
       //rebin hists
       TH2F *rebinned_hist, *rebinned_hist_CHS;
       Double_t bins_x[21]={0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200};
-      rebinned_hist= rebin(bins_x,hist,rebinned_hist,channel_ranges[i], "");
-      rebinned_hist_CHS= rebin(bins_x,hist_CHS,rebinned_hist_CHS,channel_ranges[i], "");
+      
+      rebinned_hist= rebin(bins_x,hist,rebinned_hist,channel_ranges[i], "",-1,1);
+      rebinned_hist_CHS= rebin(bins_x,hist_CHS,rebinned_hist_CHS,channel_ranges[i], "",-1,1);
       //gaussian fit
       TH1F *result_mean , *result_mean_CHS ;
       result_mean = new TH1F("result_mean","",20,bins_x);
       result_mean_CHS = new TH1F("result_mean_CHS","",20,bins_x);
+     
       result_mean= gaussianfit(rebinned_hist,channel_ranges[i],"",result_mean );
       result_mean_CHS= gaussianfit(rebinned_hist_CHS,channel_ranges[i],"",result_mean_CHS );
       // TCanvas *test= new TCanvas("test","Result Efficiency",10,10,1000,1000);
@@ -507,40 +555,27 @@ void puppiplotter()
 
       // // ////////////////////             read in Histogramms nominator       /////////////////////////////////////////////////////////////
 
-      std::cout<<" "<<hist_name<<std::endl;
+      if(berror) std::cout<<" "<<hist_name<<std::endl;
       hist_name="DY_output/rms_ZP";
       if(berror) std::cout<<"DY::Response read in Hists "<<hist_name<<std::endl;
       TH2F* hist_matched = (TH2F*)DY_f->Get(hist_name);
       TH2F* hist_CHS_matched = (TH2F*)DY_CHS_f->Get(hist_name);
      
-      Double_t bins_x2[26]={0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50};
+      //  Double_t bins_x2[26]={0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50};
       //rebin hists
       TH2F *rebinned_hist_matched, *rebinned_hist_matched_CHS;
-      rebinned_hist_matched= rebin(bins_x2,hist_matched ,rebinned_hist_matched,channel_ranges[i],"");
-      rebinned_hist_matched_CHS= rebin(bins_x,hist_CHS_matched ,rebinned_hist_matched_CHS,channel_ranges[i], "");
+      rebinned_hist_matched= rebin(bins_x,hist_matched ,rebinned_hist_matched,channel_ranges[i],"",-100,100);
+      //  rebinned_hist_matched_CHS= rebin(bins_x,hist_CHS_matched ,rebinned_hist_matched_CHS,channel_ranges[i], "");
       //gaussian fit
       TH1F *result_matched_rms , *result_matched_rms_CHS ;
-      result_matched_rms = new TH1F("result_matched_rms","",20,bins_x);
-      result_matched_rms_CHS = new TH1F("result_matched_rms_CHS","",20,bins_x);
+       result_matched_rms = new TH1F("result_matched_rms","",20,bins_x);
+      //  result_matched_rms_CHS = new TH1F("result_matched_rms_CHS","",20,bins_x);
       result_matched_rms= gaussianfit(rebinned_hist_matched,channel_ranges[i],"",result_matched_rms,true );
-      result_matched_rms_CHS= gaussianfit(rebinned_hist_matched_CHS,channel_ranges[i],"",result_matched_rms_CHS,true );
+      //  result_matched_rms_CHS= gaussianfit(rebinned_hist_matched_CHS,channel_ranges[i],"",result_matched_rms_CHS,true );
  
-      TCanvas *test= new TCanvas("test","Result Efficiency",10,10,1000,1000);
-       test->Clear();
-       test->cd();
-       result_mean->Draw();
-       // hist->Draw("colz");
-       test->Print("test.eps");
-
-       TCanvas *test2= new TCanvas("test2","Result Efficiency2",10,10,1000,1000);
-       test2->Clear();
-       test2->cd();
-       result_matched_rms->Draw();
-       //hist_matched->Draw("colz");
-       test2->Print("test2.eps");
             
       //  divide both hists
-      TGraphAsymmErrors* eff = new TGraphAsymmErrors(result_matched_rms , result_mean, "cl=0.683 b(1,1) mode" );
+       TGraphAsymmErrors* eff = new TGraphAsymmErrors(result_matched_rms , result_mean, "pois" );
       //   TGraphAsymmErrors* eff_CHS = new TGraphAsymmErrors( result_matched_rms_CHS,result_mean_CHS , "cl=0.683 b(1,1) mode" );
       
       
@@ -589,14 +624,118 @@ void puppiplotter()
       // hist_c->Destructor();
       // hist_matched_c->Destructor();
       
+      ////////////////////////   uper  /////////////////////////
+     
+      hist_name="DY_output/rms_uper_ZP";
+      if(berror) std::cout<<"DY::Response read in Hists "<<hist_name<<std::endl;
+      hist_matched = (TH2F*)DY_f->Get(hist_name);
+      hist_CHS_matched = (TH2F*)DY_CHS_f->Get(hist_name);
+     
+      //rebin hists
+      rebinned_hist_matched= rebin(bins_x,hist_matched ,rebinned_hist_matched,channel_ranges[i],"",-100,100);
+      //  rebinned_hist_matched_CHS= rebin(bins_x,hist_CHS_matched ,rebinned_hist_matched_CHS,channel_ranges[i], "");
+      //gaussian fit
+       result_matched_rms = new TH1F("result_matched_rms","",20,bins_x);
+      //  result_matched_rms_CHS = new TH1F("result_matched_rms_CHS","",20,bins_x);
+      result_matched_rms= gaussianfit(rebinned_hist_matched,channel_ranges[i],"",result_matched_rms,true );
+      //  result_matched_rms_CHS= gaussianfit(rebinned_hist_matched_CHS,channel_ranges[i],"",result_matched_rms_CHS,true );
+
+      // TCanvas *test2= new TCanvas("test2","Result Efficiency2",10,10,1000,1000);
+      // test2->Clear();
+      // test2->cd();
+      // result_matched_rms->Draw();
+      // // hist_matched->Draw("colz");
+      // // rebinned_hist_matched->Draw("colz");
+      // test2->Print("test2.eps");
+
+      //  divide both hists
+      eff = new TGraphAsymmErrors(result_matched_rms , result_mean, "pois" );
+      //   TGraphAsymmErrors* eff_CHS = new TGraphAsymmErrors( result_matched_rms_CHS,result_mean_CHS , "cl=0.683 b(1,1) mode" );
       
-      // ////Bis hier 
-
-
-
-
-
       
+      result_eff_c= new TCanvas("result_eff_c","Result Efficiency",10,10,1000,1000);
+      result_eff_c->Clear();
+      result_eff_c->cd();
+      // eff->SetMaximum(1.01);
+      // eff->SetTitle("");
+      // //X Axis, Min, Max
+      // if(var_ranges[k]=="JetPt"){
+      // 	eff->SetMinimum(0.9);
+      // 	if(eff_ranges[j]=="Efficiency_Gen")eff->GetXaxis()->SetTitle("GenJetPT");
+      // 	if(eff_ranges[j]=="Purity_Reco")  eff->GetXaxis()->SetTitle("RecoJetPT");
+      // }
+      // if(var_ranges[k]=="JetEta"){
+      // 	eff->SetMinimum(0.8);
+      // 	eff->GetXaxis()->SetRangeUser(-5,5);
+      // 	if(eff_ranges[j]=="Efficiency_Gen")eff->GetXaxis()->SetTitle("GenJetEta");
+      // 	if(eff_ranges[j]=="Purity_Reco"){
+      // 	  eff->GetXaxis()->SetTitle("RecoJetEta");
+      // 	  eff->SetMinimum(0.6);
+      // 	}
+      // }
+      // //Y Axis
+      // if(eff_ranges[j]=="Efficiency_Gen")eff->GetYaxis()->SetTitle("Efficiency");
+      // if(eff_ranges[j]=="Purity_Reco")eff->GetYaxis()->SetTitle("Purity");
+      // eff->GetYaxis()->SetTitleOffset(1.4);
+      //Draw()
+      eff->Draw("AP");
+      // eff_CHS->SetLineColor(kGreen);
+      // eff_CHS->SetMarkerColor(kGreen);
+      // eff_CHS->Draw("same");
+      // //Legend
+      // TLegend *leg = new TLegend(0.35,0.23,0.7,0.13, NULL,"brNDC");
+      // if(ak_ranges[i]=="jet")	leg->SetHeader("AK4 Jet Efficiency");
+      // if(ak_ranges[i]=="topjet")	leg->SetHeader("AK8 Efficiency");
+      // leg->SetBorderSize(0);
+      // leg->SetFillStyle(0);
+      // leg->AddEntry(eff_CHS,"CHS","lpe");
+      // leg->AddEntry(eff,"Puppi","lpe");
+      // leg->Draw();
+      
+      //save
+      result_eff_c->Print(output_folder+folder+"/rms_uper.eps");
+      result_eff_c->Destructor();
+
+      ////////////////////////   uper  /////////////////////////
+     
+      hist_name="DY_output/rms_uper_NPV";
+      if(berror) std::cout<<"DY::Response read in Hists "<<hist_name<<std::endl;
+      hist_matched = (TH2F*)DY_f->Get(hist_name);
+      hist_CHS_matched = (TH2F*)DY_CHS_f->Get(hist_name);
+     
+      //rebin hists
+      rebinned_hist_matched= rebin(bins_x,hist_matched ,rebinned_hist_matched,channel_ranges[i],"",-100,100);
+      //  rebinned_hist_matched_CHS= rebin(bins_x,hist_CHS_matched ,rebinned_hist_matched_CHS,channel_ranges[i], "");
+      //gaussian fit
+       result_matched_rms = new TH1F("result_matched_rms","",20,bins_x);
+      //  result_matched_rms_CHS = new TH1F("result_matched_rms_CHS","",20,bins_x);
+      result_matched_rms= gaussianfit(rebinned_hist_matched,channel_ranges[i],"",result_matched_rms,true );
+      //  result_matched_rms_CHS= gaussianfit(rebinned_hist_matched_CHS,channel_ranges[i],"",result_matched_rms_CHS,true );
+
+      ////////////////////////   upar  /////////////////////////
+     
+      hist_name="DY_output/rms_NPV";
+      if(berror) std::cout<<"DY::Response read in Hists "<<hist_name<<std::endl;
+      hist_matched = (TH2F*)DY_f->Get(hist_name);
+      hist_CHS_matched = (TH2F*)DY_CHS_f->Get(hist_name);
+     
+      //rebin hists
+      rebinned_hist_matched= rebin(bins_x,hist_matched ,rebinned_hist_matched,channel_ranges[i],"",-100,100);
+      //  rebinned_hist_matched_CHS= rebin(bins_x,hist_CHS_matched ,rebinned_hist_matched_CHS,channel_ranges[i], "");
+      //gaussian fit
+       result_matched_rms = new TH1F("result_matched_rms","",20,bins_x);
+      //  result_matched_rms_CHS = new TH1F("result_matched_rms_CHS","",20,bins_x);
+      result_matched_rms= gaussianfit(rebinned_hist_matched,channel_ranges[i],"",result_matched_rms,true );
+      //  result_matched_rms_CHS= gaussianfit(rebinned_hist_matched_CHS,channel_ranges[i],"",result_matched_rms_CHS,true );
+
+      TCanvas *test2= new TCanvas("test2","Result Efficiency2",10,10,1000,1000);
+      test2->Clear();
+      test2->cd();
+      result_matched_rms->Draw();
+      //hist_matched->Draw("colz");
+      // rebinned_hist_matched->Draw("colz");
+      test2->Print("test2.eps");
+      }
     }//channel_ranges i
 
 

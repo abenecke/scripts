@@ -210,15 +210,52 @@ void limit()
   double HT_data2016_puppi_masswindow[3]={0.113,0.044,0.0281};
   double HT_data2016_btag[3]={0.0955,0.0491,0.0297};
 
+  double HT_data2016_ele[3]={0.149,0.0712,0.0547};
+  double HT_data2016_ele_muon_trigger115[3]={0.079,0.0327,0.0213};
+  double HT_data2016_ele_muon_triggercomb2[3]={0.0721,0.0325,0.022};
+  double HT_data2016_ele_metcut40[3]={0.163,0.071,0.054};
+  double HT_data2016_ele_metcut60[3]={0.17,0.068,0.056};
+  double HT_data2016_ele_isotrigger[3]={0.167,0.075,0.0599};
+
+
+  double HT_data2016_ele_30GeV[3]={0.137,0.0534,0.0387};
+  double HT_data2016_ele_notriang_met90[3]={0.149,0.0544,0.0398};
+
+  double HT_data2016_ele_id[3]={0.181,0.0666,0.0541};
+  double HT_data2016_ele_MVA[3]={0.199,0.0663,0.0474};
+
+  double HT_data2016_muon_tau45[3]={0.0988,0.0438,0.0274};
+  double HT_data2016_muon_tau5[3]={0.0982,0.0437,0.0271};
+  double HT_data2016_muon_tau55[3]={0.103,0.0428,0.0264};
+  double HT_data2016_muon_tau6[3]={0.0996,0.0425,0.0273};
+  double HT_data2016_muon_tau1[3]={0.0978,0.0438,0.0275};
+
+  double HT_data2016_muon_tau1_met60[3]={0.118,0.0426,0.0263};
+
+
+  double HT_data2016_muon_tau32_tau05[3]={0.103,0.046,0.0274};
+  double HT_data2016_muon_tau32_tau057[3]={0.101,0.0446,0.0276};
+  double HT_data2016_muon_tau32_tau06[3]={0.1,0.043,0.0273};
+  double HT_data2016_muon_tau32_tau067[3]={0.102,0.0442,0.0274};
+  double HT_data2016_muon_tau32_tau081[3]={0.111,0.0484,0.0303};
+
+  double HT_data2016_muon_eta[3]={0.108,0.0438,0.027};
+
   double ZT_data2016_noH1[3]={0.289,0.0932,0.0522};
   double ZT_data2016_all[3]={0.231,0.0795,0.0452};
   double ZT_data2016_tagger_priority[3]={0.228,0.0796,0.046};
   double ZT_data2016_puppi[3]={0.248,0.0835,0.0433};
 
 
+  double HT_data2016_ele_muon[3]={0.0863,0.0345,0.0222};
+  double ZT_data2016_ele_muon[3]={0.166,0.0541,0.0312};
+  double WB_data2016_ele_muon[3]={0.638,0.226,0.128};
+
+
   double WB_data2016_noH1[3]={1.27,0.483,0.257};
   double WB_data2016_all[3]={0.963,0.376,0.218};
   double WB_data2016_tagger_priority[3]={0.941,0.377,0.217};
+
 
  // double observed[17] = {20,2.97,0.399,0.181,0.0684,0.0378,0.0256,0.0198,0.0149,0.0131,0.0127,0.0107,0.00962,0.00909,0.00848,0.00831,0.00788};
   double low_95[5] = {0,0.506,0.226,0.143	,0};
@@ -250,11 +287,11 @@ void limit()
  TGraph* g_up_95 = new TGraph(5,x2,up_95);
  TGraph* g_up_68 = new TGraph(5,x2,up_68);
  // TGraph* g_observed = new TGraph(3,x,observed);
- TGraph* g_central = new TGraph(3,x,HT_data2016_puppi);
- TGraph* g_central1 = new TGraph(3,x,HT_data2016_tagger_priority);
- TGraph* g_central2 = new TGraph(3,x,HT_data2016_puppi_masswindow);
- TGraph* g_central_a = new TGraph(3,x,ZT_data2016_tagger_priority);
- TGraph* g_central1_a = new TGraph(3,x,HT_data2016_tagger_priority);
+ TGraph* g_central = new TGraph(3,x,HT_data2016_ele_muon);
+ TGraph* g_central1 = new TGraph(3,x,ZT_data2016_ele_muon);
+ TGraph* g_central2 = new TGraph(3,x,WB_data2016_ele_muon);
+ TGraph* g_central_a = new TGraph(3,x,HT_data2016_muon_tau32_tau081);
+ TGraph* g_central1_a = new TGraph(3,x,HT_data2016_muon_tau32_tau06);
  TGraph* g_central2_a = new TGraph(3,x,WB_data2016_tagger_priority);
  TGraph* g_central3 = new TGraph(3,x,emanuele_WB_obs);
 
@@ -283,13 +320,13 @@ void limit()
  // g_observed->SetLineColor(kBlack);
  // g_observed->SetLineWidth(3);
  g_central->SetFillColor(0);
- // g_central->SetLineStyle(2);
- g_central->SetLineColor(kGreen);
+ //  g_central->SetLineStyle(2);
+ g_central->SetLineColor(kBlue);
  g_central->SetLineWidth(2);
 
 g_central1->SetFillColor(0);
 // g_central1->SetLineStyle(2);
- g_central1->SetLineColor(kBlue);
+ g_central1->SetLineColor(kGreen);
  g_central1->SetLineWidth(2);
 
  g_central2->SetFillColor(0);
@@ -304,7 +341,7 @@ g_central_a->SetFillColor(0);
 
 g_central1_a->SetFillColor(0);
  g_central1_a->SetLineStyle(2);
- g_central1_a->SetLineColor(kBlue);
+ g_central1_a->SetLineColor(kOrange);
  g_central1_a->SetLineWidth(2);
 
  g_central2_a->SetFillColor(0);
@@ -340,68 +377,77 @@ g_central1_a->SetFillColor(0);
  TCanvas * c = new TCanvas("c", "c", 800,600);
   c->SetLogy();
   // g_up_95_dummy->SetMinimum(0.05);
- //g_up_95_dummy->GetXaxis()->SetRangeUser(x[0],x[3]);
- //g_up_95_dummy->Draw("AF");
- double min =0.01 ;
- g_up_95->SetMinimum(min);
- g_up_95->GetXaxis()->SetRangeUser(x[0],x[2]);
- g_up_95->SetMaximum(1);
- g_up_95->Draw("AF");
- // g_up_95->Draw("F SAME");
- // g_up_68->Draw("F SAME"); 
- // g_low_68->Draw("F SAME"); 
- // g_low_95->Draw("F SAME");
- // g_up_95_dummy->Draw("F SAME");
- //g_observed->Draw("L SAME");
+  //g_up_95_dummy->GetXaxis()->SetRangeUser(x[0],x[3]);
+  //g_up_95_dummy->Draw("AF");
+  double min =0.02 ;
+  g_up_95->SetMinimum(min);
+  g_up_95->GetXaxis()->SetRangeUser(x[0],x[2]);
+  g_up_95->SetMaximum(1.7);
+  g_up_95->Draw("AF");
+  // g_up_95->Draw("F SAME");
+  // g_up_68->Draw("F SAME"); 
+  // g_low_68->Draw("F SAME"); 
+  // g_low_95->Draw("F SAME");
+  // g_up_95_dummy->Draw("F SAME");
+  //g_observed->Draw("L SAME");
 
- //  g_central3->Draw("L SAME");
- g_central1->Draw("L SAME");
+  //  g_central3->Draw("L SAME");
+  g_central1->Draw("L SAME");
   g_central2->Draw("L SAME");
   g_central->Draw("L SAME"); 
+  // g_central_a->Draw("L SAME");
+  // g_central2_a->Draw("L SAME");
   // g_central1_a->Draw("L SAME");
- // g_central2_a->Draw("L SAME");
- // g_central_a->Draw("L SAME");
   
- // g_theory->Draw("L SAME");
- // g_theory_up->Draw("L SAME");
- // g_theory_down->Draw("L SAME");
- TLegend *leg1;
- // leg1 = new TLegend(0.25,0.7,0.78,0.9,"","brNDC");//x+0.1
- leg1 = new TLegend(0.35,0.7,0.88,0.9,"","brNDC");//x+0.1
- leg1->SetBorderSize(0);
- leg1->SetTextSize(0.035);
- leg1->SetFillColor(10);
- leg1->SetLineColor(1);
- leg1->SetTextFont(42);
- TLegendEntry* entries[6];
-  
- //entries[0]=leg1->AddEntry(g_observed, "observed 95% C.L. upper limits","L");
+  // g_theory->Draw("L SAME");
+  // g_theory_up->Draw("L SAME");
+  // g_theory_down->Draw("L SAME");
+  TLegend *leg1;
+  // leg1 = new TLegend(0.25,0.7,0.78,0.9,"","brNDC");//x+0.1
+  leg1 = new TLegend(0.35,0.7,0.88,0.9,"","brNDC");//x+0.1
+  leg1->SetBorderSize(0);
+  leg1->SetTextSize(0.035);
+  leg1->SetFillColor(10);
+  leg1->SetLineColor(1);
+  leg1->SetTextFont(42);
+  TLegendEntry* entries[6];
+  // leg1->SetHeader("                    M_{T'} = 1.2 TeV   ");
+  //entries[0]=leg1->AddEntry(g_observed, "observed 95% C.L. upper limits","L");
 
- // entries[1]=leg1->AddEntry(g_central2, "expected 95% C.L. upper limits Wb (e/mu channel)","L");
+  // entries[1]=leg1->AddEntry(g_central2, "expected 95% C.L. upper limits Wb (e/mu channel)","L");
 
- // entries[1]=leg1->AddEntry(g_central3, "2015 data set (B2G-16-013)","L");
- // leg1->AddEntry((TObject*)0, "observed 95% C.L. upper limits (Wb)", ""); 
- // leg1->AddEntry((TObject*)0, " ", "");
-  leg1->AddEntry((TObject*)0, "[Puupi]", "");
- entries[1]=leg1->AddEntry(g_central2, "expected 95% C.L. upper limits masswindow (Ht)","L");
+  // entries[1]=leg1->AddEntry(g_central3, "2015 data set (B2G-16-013)","L");
+  // leg1->AddEntry((TObject*)0, "observed 95% C.L. upper limits (Wb)", ""); 
+  // leg1->AddEntry((TObject*)0, " ", "");
+  // leg1->AddEntry((TObject*)0, "[electron]", "");
+  //entries[1]=leg1->AddEntry(g_central1, "expected 95% C.L. upper limits MET > 40","L");
+
+  //leg1->AddEntry((TObject*)0, "[muon]", "");
+  // entries[1]=leg1->AddEntry(g_central_a, "expected 95% C.L. upper limits #tau_{3/2}<0.81","L");
+  entries[1]=leg1->AddEntry(g_central2, "expected 95% C.L. upper limits (Wb)","L");
+  entries[1]=leg1->AddEntry(g_central1, "expected 95% C.L. upper limits (Zt)","L");
   entries[1]=leg1->AddEntry(g_central, "expected 95% C.L. upper limits (Ht)","L");
- // entries[1]=leg1->AddEntry(g_central1, "expected 95% C.L. upper limits (Ht)","L");
-  leg1->AddEntry((TObject*)0, "[CHS]", "");
-  entries[1]=leg1->AddEntry(g_central1, "expected 95% C.L. upper limits (Ht)","L");
- // entries[1]=leg1->AddEntry(g_central2_a, "expected 95% C.L. upper limits  (Wb) ","L");
- // entries[1]=leg1->AddEntry(g_central_a, "expected 95% C.L. upper limits (Zt)","L");
-  //  entries[1]=leg1->AddEntry(g_central1_a, "expected 95% C.L. upper limits (Ht)","L");
+  //  leg1->AddEntry((TObject*)0, "muon |#eta|<2.4", "");
+  // entries[1]=leg1->AddEntry(g_central2, "expected 95% C.L. upper limits #tau_{3/2}<0.67","L");
+  //  leg1->AddEntry((TObject*)0, "w triangular cut + MET > 60", "");
+  // entries[1]=leg1->AddEntry(g_central1_a, "expected 95% C.L. upper limits #tau_{2/1} < 0.6","L");
+  // entries[1]=leg1->AddEntry(g_central1, "expected 95% C.L. upper limits (Zt)","L");
+  //  leg1->AddEntry((TObject*)0, "muon |#eta|<2.1", ""); 
+  // entries[1]=leg1->AddEntry(g_central2, "expected 95% C.L. upper limits MET > 60","L");
+  // entries[1]=leg1->AddEntry(g_central2_a, "expected 95% C.L. upper limits  (Wb) ","L");
+  //  entries[1]=leg1->AddEntry(g_central_a, "expected 95% C.L. upper limits iso-trigger","L");
+  // entries[1]=leg1->AddEntry(g_central1_a, "expected 95% C.L. upper limits #tau_{3/2}<0.6","L");
 
 
- // entries[2]=leg1->AddEntry(g_theory, "LQ_{3} (NLO, Kraemer et al.)","L");
- // entries[3]=leg1->AddEntry(g_theory_up, "uncertainties on the theory cross section","L");
- // entries[4]=leg1->AddEntry(g_up_95, "central 95% expected upper limits","F");
- // entries[5]=leg1->AddEntry(g_up_68, "central 68% expected upper limits","F");
+  // entries[2]=leg1->AddEntry(g_theory, "LQ_{3} (NLO, Kraemer et al.)","L");
+  // entries[3]=leg1->AddEntry(g_theory_up, "uncertainties on the theory cross section","L");
+  // entries[4]=leg1->AddEntry(g_up_95, "central 95% expected upper limits","F");
+  // entries[5]=leg1->AddEntry(g_up_68, "central 68% expected upper limits","F");
 
-//   entries[0]=leg1->AddEntry(g_observed, "gemessene obere Grenze mit 95% Konfidenz","L");
-//   entries[1]=leg1->AddEntry(g_central, "erwartete obere Grenze mit 95% Konfidenz","L");
-//   entries[2]=leg1->AddEntry(g_up_95, "zentrale 95% der Erwartung","F");
-//   entries[3]=leg1->AddEntry(g_up_68, "zentrale 68% der Erwartung","F");
+  //   entries[0]=leg1->AddEntry(g_observed, "gemessene obere Grenze mit 95% Konfidenz","L");
+  //   entries[1]=leg1->AddEntry(g_central, "erwartete obere Grenze mit 95% Konfidenz","L");
+  //   entries[2]=leg1->AddEntry(g_up_95, "zentrale 95% der Erwartung","F");
+  //   entries[3]=leg1->AddEntry(g_up_68, "zentrale 68% der Erwartung","F");
 
 
  leg1->Draw();
@@ -416,20 +462,37 @@ g_central1_a->SetFillColor(0);
  text1->SetTextSize(0.04);
  text1->SetY(1.00);
  text1->Draw();
- 
 
- TH1F* h =  g_up_95->GetHistogram();
- h->UseCurrentStyle();
+ TString infotext2 = TString::Format("M_{T'} = 1.2 TeV ");
+ TLatex *text2 = new TLatex(3.5, 24, infotext2);
+ text2->SetNDC();
+ text2->SetTextAlign(33);
+ text2->SetX(0.35);
+ text2->SetTextFont(42);
+ text2->SetTextSize(0.04);
+ text2->SetY(1.00);
+ text2->Draw();
+
+
+  // TPaveText *pt = new TPaveText(.625,.6,.84,.7,"nbNDC");
+  // pt->SetFillColor(0);
+  // //  pt->AddText("T ' #rightarrow H t");
+  // pt->AddText("M = 1.2 TeV");
+  // // pt->SetFillColor(kAzure+5);
+  // pt->Draw();
+
+  TH1F* h =  g_up_95->GetHistogram();
+  h->UseCurrentStyle();
   h->UseCurrentStyle();
   h->GetXaxis()->SetRangeUser(200,1000);
- //h->SetXTitle(" m_{t#bar{t}} [GeV/c^{2}]");
- h->SetXTitle(" M_{Z'} [GeV/c^{2}]");
- h->SetYTitle("#sigma(pp#rightarrow Z'#rightarrow t T') #times BR [pb]");
- h->Draw("AXIS SAME");
- c->GetFrame()->Draw("same");
- c->Print("limitplot.eps");
- // c->Print("limitplot.pdf");
- // c->Print("limitplot.png");
+  //h->SetXTitle(" m_{t#bar{t}} [GeV/c^{2}]");
+  h->SetXTitle(" M_{Z'} [GeV/c^{2}]");
+  h->SetYTitle("#sigma(pp#rightarrow Z'#rightarrow t T') #times BR [pb]");
+  h->Draw("AXIS SAME");
+  c->GetFrame()->Draw("same");
+  c->Print("limitplot.eps");
+  // c->Print("limitplot.pdf");
+  // c->Print("limitplot.png");
 
 
 }

@@ -18,7 +18,7 @@ void BackgroundNames_HT()
 
   
   for(int j=0; j<Nsyst; ++j){
-    TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/sideband_masscut";
+    TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/uncertainties/sideband/elec/none";
     if(systname[j]!="default"){
       directory += systname[j];
       directory +="_";
@@ -26,7 +26,7 @@ void BackgroundNames_HT()
     }
     std::cout<< directory <<std::endl;
 
-    TString outfilename = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/sideband_masscut/theta_histograms_background_MZPrime";
+    TString outfilename = directory + "/theta_histograms_background_MZPrime";
     if(systname[j]!="default"){
       outfilename += systname[j];
       outfilename +="_";
@@ -50,7 +50,7 @@ void BackgroundNames_HT()
       std::cout<< directory+"/."+mcdata+"."+process[i]+".root" << std::endl;
       // TFile * infile_side1 = new TFile(directory+"/side1/uhh2.AnalysisModuleRunner."+mcdata+"."+process[i]+".root");
       // infile_side1->cd();
-      TFile * infile_side2 = new TFile(directory+"/side2/uhh2.AnalysisModuleRunner."+mcdata+"."+process[i]+".root");
+      TFile * infile_side2 = new TFile(directory+"/uhh2.AnalysisModuleRunner."+mcdata+"."+process[i]+".root");
       infile_side2->cd();
       // TFile * infile_side3 = new TFile(directory+"/side3/uhh2.AnalysisModuleRunner."+mcdata+"."+process[i]+".root");
       // infile_side3->cd();

@@ -5,17 +5,17 @@ using namespace std;
 ///////////                        Variabels to set                           ////////////////////////////////////////////////////////////////////////////
 TString unc_name = "none"; // "jersmear_up" , "jersmear_down" ,"jecsmear_up" , "jecsmear_down" , "none"
 //TString folder = "~/ownCloud/masterarbeit/tex/plots/mistag/higgs/";
-TString folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/pictures/higgs/mistagrate/"+unc_name+"/";
-TString unc_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/higgs/hists/";
+TString folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/pictures/mistag/h2btag";
+TString unc_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime//CMSSW_8X/pictures/mistag/";
  
 TGraphAsymmErrors* get_eff(TString sample, TString obs, TString hname1,double &tot_eff, double &tot_err,TString hname_all,TString hname_trig )
 {
 
   TFile* file;
   if (sample.CompareTo("data", TString::kIgnoreCase) == 0){
-    file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/higgs/"+unc_name+"/uhh2.AnalysisModuleRunner.DATA.Data.root", "READ");
+    file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/mistag/h2btag/uhh2.AnalysisModuleRunner.DATA.DATA.root", "READ");
   } else if (sample.CompareTo("QCD", TString::kIgnoreCase) == 0){
-    file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/higgs/"+unc_name+"/uhh2.AnalysisModuleRunner.MC.QCD.root", "READ");
+    file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/mistag/h2btag/uhh2.AnalysisModuleRunner.MC.QCD.root", "READ");
   } 
  		
   TString name_all =  hname_all + hname1; 
@@ -23,6 +23,7 @@ TGraphAsymmErrors* get_eff(TString sample, TString obs, TString hname1,double &t
   //  Double_t bins[25]={20, 79.2, 138.4, 197.6, 256.8, 316, 375.2, 434.4, 493.6, 552.8, 612, 671.2, 730.4, 789.6, 848.8, 908, 967.2, 1026.4, 1085.6, 1144.8, 1204, 1263.2, 1322.4, 1381.6, 1440.8};
   Double_t bins[19]={20, 79.2, 138.4, 197.6, 256.8, 316, 375.2, 434.4, 493.6, 552.8, 612, 671.2, 730.4, 789.6, 848.8, 908, 1085.6, 1263.2, 1440.8};
   TH1F* d_all =  (TH1F*) d_all_old->Rebin(18,"d_all",bins);
+  d_all->Rebin(2);
   // for (int i=1; i<d_all->GetNbinsX()+1; ++i){
   //   cout << d_all->GetXaxis()->GetBinLowEdge(i) << ", ";}
 
@@ -32,6 +33,7 @@ TGraphAsymmErrors* get_eff(TString sample, TString obs, TString hname1,double &t
   TString name_trig = hname_trig + hname1; 
   TH1F* d_trig_old = (TH1F*) file->Get(name_trig);
   TH1F* d_trig =  (TH1F*) d_trig_old->Rebin(18,"d_trig", bins);
+  d_trig->Rebin(2);
   TCanvas *trig_c = new TCanvas("trig_c","trig",10,10,700,900);
   d_trig->Draw();
 
@@ -102,10 +104,10 @@ TGraphAsymmErrors* get_eff_weight(TString sample, TString obs, TString hname1,do
   TFile* file;
   if (sample.CompareTo("data", TString::kIgnoreCase) == 0){
     //file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/mass/"+unc_name+"/uhh2.AnalysisModuleRunner.DATA.Data.root", "READ");
-    file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/higgs/"+unc_name+"/uhh2.AnalysisModuleRunner.DATA.Data.root", "READ");
+    //    file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/higgs/"+unc_name+"/uhh2.AnalysisModuleRunner.DATA.Data.root", "READ");
     //file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/eff/uhh2.AnalysisModuleRunner.MC.TTbar_right.root", "READ");
   } else if (sample.CompareTo("QCD", TString::kIgnoreCase) == 0){
-    file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/mass/"+unc_name+"/uhh2.AnalysisModuleRunner.MC.QCD.root", "READ");
+    //  file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/mass/"+unc_name+"/uhh2.AnalysisModuleRunner.MC.QCD.root", "READ");
     //file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/higgs/"+unc_name+"/uhh2.AnalysisModuleRunner.MC.QCD.root", "READ");
     // file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/eff/match04/uhh2.AnalysisModuleRunner.MC.TTbar_right.root", "READ");
   } 
@@ -276,12 +278,12 @@ void draw_both_eff(TGraphAsymmErrors* eff, TString epsfilename, TString sample, 
     xtitle = "electron relative isolation";
   }
   painter->GetXaxis()->SetTitle(painter->GetTitle());
-  painter->GetYaxis()->SetTitle("mistag rate H tagger [%]");
+  painter->GetYaxis()->SetTitle("mistag rate H_{2b} tagger [%]");
   painter->SetTitle("");
   painter->GetXaxis()->SetTitleSize(0.05);
   painter->GetYaxis()->SetTitleSize(0.05);
   painter->GetXaxis()->SetLabelSize(0.04);
-  painter->GetXaxis()->SetTitle("p_{T} AK8 jet [GeV/c]");
+  painter->GetXaxis()->SetTitle("p_{T} AK8 jet [GeV]");
   painter->GetYaxis()->SetLabelSize(0.04);
   painter->GetYaxis()->SetTitleOffset(1.9);
 
@@ -330,7 +332,7 @@ void draw_ratio(TGraphAsymmErrors* ratio, TString epsfilename, TString rname)
 
   TH1F* painter = ratio->GetHistogram();
   painter->GetXaxis()->SetTitle(painter->GetTitle());
-  if(epsfilename.Contains("pt"))painter->GetXaxis()->SetTitle("p_{T} AK8 jet [GeV/c]");
+  if(epsfilename.Contains("pt"))painter->GetXaxis()->SetTitle("p_{T} AK8 jet [GeV]");
   painter->GetYaxis()->SetTitle(rname);
   painter->GetYaxis()->CenterTitle(true);
   painter->SetTitle("");
@@ -360,13 +362,13 @@ void draw_ratio(TGraphAsymmErrors* ratio, TString epsfilename, TString rname)
     func->SetParName(0, "p1");
   } else {
     //  func = new TF1("Ratio", "[0]", painter->GetXaxis()->GetXmin(),  painter->GetXaxis()->GetXmax());
-    func = new TF1("Ratio", "[0]",200,  850);
+    func = new TF1("Ratio", "[0]",150,  1100);
     func->SetParName(0, "Ratio");
   }
   ratio->Fit(func, "R");
   
   if(epsfilename.Contains("pt.eps", TString::kIgnoreCase)){
-    TFile *f= new TFile(unc_folder +"QCD_"+unc_name+".root","RECREATE");
+    TFile *f= new TFile(unc_folder +"QCD_h2b.root","RECREATE");
     TGraphAsymmErrors *tot_eff_h = (TGraphAsymmErrors *)ratio->Clone("tot_eff_h");
     tot_eff_h->Write();
    

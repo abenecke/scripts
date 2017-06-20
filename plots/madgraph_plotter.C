@@ -284,21 +284,21 @@ void madgraph_plotter()
 
 ///////////////////////    PT ZT    ////////////////////////////////////////////////////////////////////////////////////////////////
  histname = "PT_Z";
- hists={(TH1F*)rho_ZT_10_1->Get(histname),(TH1F*)rho_ZT_30_1->Get(histname),(TH1F*)rho_ZT->Get(histname)};
+ hists={(TH1F*)rho_ZT_10_1->Get(histname),(TH1F*)rho_ZT_30_1->Get(histname),(TH1F*)rho_ZT_10_10->Get(histname),(TH1F*)rho_ZT_30_10->Get(histname),(TH1F*)rho_ZT->Get(histname)};
  rebinned =rebin(25 ,hists );
 
-  colors = {kRed,kBlue, kOrange};
- names = {"Z' 10% T' 1%","Z' 30% T' 1%","Z' 1% T' 1%"}; 
+ colors = {kRed,kBlue, kOrange,kViolet,kGreen};
+ names = {"Z' 10% T' 1%","Z' 30% T' 1%","Z' 10% T' 10%","Z' 30% T' 10%","Z' 1% T' 1%"}; 
  save_result (rebinned,colors,names,"width_ZT_PT.eps","#rho^{0} model, LH", "P_{T}[Z] (GeV)", "Events");
 
 ///////////////////////    PT T23    ////////////////////////////////////////////////////////////////////////////////////////////////
  histname = "PT_T23";
- hists={(TH1F*)rho_ZT_10_1->Get(histname),(TH1F*)rho_ZT_30_1->Get(histname)};
+ hists={(TH1F*)rho_ZT_10_1->Get(histname),(TH1F*)rho_ZT_30_1->Get(histname),(TH1F*)rho_ZT_10_10->Get(histname),(TH1F*)rho_ZT_30_10->Get(histname)};
  rebinned =rebin(25 ,hists );
  // rebinned.push_back((TH1F*)rho_ZT->Get(histname));
- hists={(TH1F*)rho_ZT->Get(histname),rebinned[0],rebinned[1]};
- colors = {kOrange,kRed,kBlue};
- names = {"Z' 1% T' 1%","Z' 10% T' 1%","Z' 30% T' 1%"}; 
+ hists={(TH1F*)rho_ZT->Get(histname),rebinned[0],rebinned[1],rebinned[2],rebinned[3]};
+ colors = {kOrange,kRed,kBlue,kViolet,kGreen};
+ names = {"Z' 1% T' 1%","Z' 10% T' 1%","Z' 30% T' 1%","Z' 10% T' 10%","Z' 30% T' 10%"}; 
  save_result (hists,colors,names,"width_T23_PT.eps","#rho^{0} model, LH", "P_{T}[T'] (GeV)", "Events",0.2,0.92,0.44,0.57,false);
 
 

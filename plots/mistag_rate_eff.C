@@ -4,17 +4,17 @@
 using namespace std;
 ///////////                        Variabels to set                           ////////////////////////////////////////////////////////////////////////////
 TString unc_name = "none"; // "jersmear_up" , "jersmear_down" ,"jecsmear_up" , "jecsmear_down" , "none"
- TString folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/pictures/eff/mistagrate/"+unc_name+"/";
-TString unc_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/mass/hists/";
+ TString folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/pictures/mistag/eff";
+TString unc_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/pictures/mistag/";
  
 TGraphAsymmErrors* get_eff(TString sample, TString obs, TString hname1,double &tot_eff, double &tot_err,TString hname_all,TString hname_trig )
 {
 
   TFile* file;
   if (sample.CompareTo("data", TString::kIgnoreCase) == 0){ 
-    file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/mass/"+unc_name+"/uhh2.AnalysisModuleRunner.DATA.Data.root", "READ");
+    file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/mistag/eff/uhh2.AnalysisModuleRunner.DATA.DATA.root", "READ");
   } else if (sample.CompareTo("QCD", TString::kIgnoreCase) == 0){
-      file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/mass/"+unc_name+"/uhh2.AnalysisModuleRunner.MC.QCD.root", "READ");
+      file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/mistag/eff/uhh2.AnalysisModuleRunner.MC.QCD.root", "READ");
   } 
  		
   TString name_all =  hname_all + hname1; 
@@ -272,7 +272,7 @@ void draw_both_eff(TGraphAsymmErrors* eff, TString epsfilename, TString sample, 
   painter->GetYaxis()->SetTitleSize(0.05);
   painter->GetXaxis()->SetLabelSize(0.04);
   painter->GetYaxis()->SetLabelSize(0.04);
- painter->GetXaxis()->SetTitle("p_{T} AK8 jet [GeV/c]");
+ painter->GetXaxis()->SetTitle("p_{T} AK8 jet [GeV]");
  painter->GetYaxis()->SetTitleOffset(1.9);
 
   painter->GetYaxis()->SetRangeUser(0, 0.25);
@@ -319,7 +319,7 @@ void draw_ratio(TGraphAsymmErrors* ratio, TString epsfilename, TString rname)
 
   TH1F* painter = ratio->GetHistogram();
   painter->GetXaxis()->SetTitle(painter->GetTitle());
-  if(epsfilename.Contains("pt"))  painter->GetXaxis()->SetTitle("p_{T} AK8 jet [GeV/c]");
+  if(epsfilename.Contains("pt"))  painter->GetXaxis()->SetTitle("p_{T} AK8 jet [GeV]");
   painter->GetYaxis()->SetTitle(rname);
   painter->GetYaxis()->CenterTitle(true);
   painter->SetTitle("");

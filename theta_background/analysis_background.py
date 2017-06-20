@@ -1,28 +1,33 @@
-model = build_model_from_rootfile('/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/sidebands/theta_histograms_background_MZPrime.root',include_mc_uncertainties = True)
+model = build_model_from_rootfile('/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/uncertainties/sideband/elec/none/theta_histograms_background_MZPrime.root',include_mc_uncertainties = True)
 model.fill_histogram_zerobins()
 model.set_signal_processes('MC_ZPrime*')
 #for p in model.processes:
 #    model.add_lognormal_uncertainty('lumi', math.log(1.026), p)
 #    model.add_lognormal_uncertainty('muonid', math.log(1.005), p)
 #    model.add_lognormal_uncertainty('muontrigger', math.log(1.1), p)
+#model.scale_predictions(1.3,'WJets');
 model.add_lognormal_uncertainty('wj_rate', math.log(1.5), 'WJets')
 #model.add_lognormal_uncertainty('zj_rate', math.log(1.5), 'DYJetsToLL')
+
+#model.scale_predictions(0.9,'TTbar');
 model.add_lognormal_uncertainty('ttbar_rate', math.log(1.5), 'TTbar')
-model.add_lognormal_uncertainty('qcd_rate', math.log(2.0), 'QCD')
+#model.add_lognormal_uncertainty('qcd_rate', math.log(2.0), 'QCD')
 #model.add_lognormal_uncertainty('st_rate', math.log(1.5), 'ST')
 
 
 
 options = Options()
 #options.set('minimizer', 'strategy', 'newton_vanilla')
-
+#options = theta_auto.Options()
+options.set('minimizer', 'strategy', 'robust')
+options.set('minimizer', 'minuit_tolerance_factor', '100')
+#options.set('minimizer', 'minuit_tolerance_factor', '1000')
 #sig_a = ['MC_ZPrime1500ToTPrime1200T_TPrimeToHT','MC_ZPrime2000ToTPrime1200T_TPrimeToHT','MC_ZPrime2500ToTPrime1200T_TPrimeToHT']
 #sig = 'MC_ZPrime'
 sig_a = []
 sig = ''
 
 res = mle(model,'data', 1, signal_process_groups = {sig: sig_a},with_covariance = True, chi2 = True, options = options)
-#res = mle(model,'data', 1, signal_process_groups = {sig: sig_a},with_covariance = True, chi2 = True, options = options)
 
 from numpy import linalg as LA
 cov2 = res[sig]['__cov'][0]

@@ -4,8 +4,8 @@
 using namespace std;
 ///////////                        Variabels to set                           ////////////////////////////////////////////////////////////////////////////
 TString unc_name = "none"; // "jersmear_up" , "jersmear_down" ,"jecsmear_up" , "jecsmear_down" , "none"
-TString folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/pictures/QCD/test/";
-TString unc_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/hists/";
+TString folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/pictures/mistag/zwtag";
+TString unc_folder = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/pictures/mistag/";
 
  
 TGraphAsymmErrors* get_eff(TString sample, TString obs, TString hname1,double &tot_eff, double &tot_err,TString hname_all,TString hname_trig )
@@ -13,9 +13,9 @@ TGraphAsymmErrors* get_eff(TString sample, TString obs, TString hname1,double &t
 
   TFile* file;
   if (sample.CompareTo("data", TString::kIgnoreCase) == 0){
-    file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/"+unc_name+"/uhh2.AnalysisModuleRunner.DATA.Data.root", "READ");
+    file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/mistag/zwtag/uhh2.AnalysisModuleRunner.DATA.DATA.root", "READ");
   } else if (sample.CompareTo("QCD", TString::kIgnoreCase) == 0){
-    file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/"+unc_name+"/uhh2.AnalysisModuleRunner.MC.QCD.root", "READ");
+    file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/mistag/zwtag/uhh2.AnalysisModuleRunner.MC.QCD.root", "READ");
     
   } 
  		
@@ -96,7 +96,7 @@ TGraphAsymmErrors* get_eff_weight(TString sample, TString obs, TString hname1,do
 
   TFile* file;
   if (sample.CompareTo("data", TString::kIgnoreCase) == 0){
-    file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/"+unc_name+"/uhh2.AnalysisModuleRunner.DATA.Data.root", "READ");
+    file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/"+unc_name+"/uhh2.AnalysisModuleRunner.DATA.DATA.root", "READ");
   } else if (sample.CompareTo("QCD", TString::kIgnoreCase) == 0){
     file = new TFile("/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/25ns/rootfile/QCD/"+unc_name+"/uhh2.AnalysisModuleRunner.MC.QCD.root", "READ");
   } 
@@ -272,7 +272,7 @@ void draw_both_eff(TGraphAsymmErrors* eff, TString epsfilename, TString sample, 
   painter->GetYaxis()->SetTitleSize(0.05);
   painter->GetXaxis()->SetLabelSize(0.04);
   painter->GetYaxis()->SetLabelSize(0.04);
-  painter->GetXaxis()->SetTitle("p_{T} AK8 jet [GeV/c]");
+  painter->GetXaxis()->SetTitle("p_{T} AK8 jet [GeV]");
   painter->GetYaxis()->SetTitleOffset(1.9);
 
   painter->GetYaxis()->SetRangeUser(0, 0.12);
@@ -285,26 +285,26 @@ void draw_both_eff(TGraphAsymmErrors* eff, TString epsfilename, TString sample, 
   TLine* l = new TLine(painter->GetXaxis()->GetXmin(), 1., painter->GetXaxis()->GetXmax(), 1.);
   l->SetLineColor(kBlue);
   l->Draw();
-
+  eff->SetMaximum(0.25);
   eff->Draw("Psame");
   eff2->Draw("PSAME");
 
 
-TPaveText* pt = new TPaveText(0.2,0.18,0.62,0.29,"nbNDC");
+  TPaveText* pt = new TPaveText(0.22,0.18,0.7,0.29,"nbNDC");
   pt->SetFillColor(kGray);
   pt->Draw();
 
-  TString info = TString::Format("< #varepsilon_{MC} > = %4.3f #pm %4.3f", tot_eff, tot_err);
-  TString info2 = TString::Format("< #varepsilon_{Data} > = %4.3f #pm %4.3f", tot_eff2, tot_err2);
+  TString info = TString::Format("< #varepsilon_{MC}^{tot} > = %4.3f #pm %4.3f", tot_eff, tot_err);
+  TString info2 = TString::Format("< #varepsilon_{Data}^{tot} > = %4.3f #pm %4.5f", tot_eff2, tot_err2);
   TLatex* text = new TLatex();
   text->SetTextFont(62);
   text->SetNDC();
   text->SetTextColor(eff->GetLineColor());
   text->SetTextSize(0.04);
   // text->DrawLatex(0.67, 0.2, info.Data());
-  text->DrawLatex(0.2, 0.25, info.Data());
- text->SetTextColor(eff2->GetLineColor());
-  text->DrawLatex(0.2, 0.2, info2.Data());
+  text->DrawLatex(0.22, 0.25, info.Data());
+  text->SetTextColor(eff2->GetLineColor());
+  text->DrawLatex(0.22, 0.2, info2.Data());
 
   gPad->SaveAs(epsfilename);
 
@@ -319,7 +319,7 @@ void draw_ratio(TGraphAsymmErrors* ratio, TString epsfilename, TString rname)
 
   ratio->Draw("AP");
   if(epsfilename.Contains("pt.eps", TString::kIgnoreCase)){
-    TFile *f= new TFile(unc_folder +"QCD_"+unc_name+".root","RECREATE");
+    TFile *f= new TFile(unc_folder +"QCD_zwtag"+unc_name+".root","RECREATE");
     TGraphAsymmErrors *tot_eff_h =(TGraphAsymmErrors*)ratio->Clone("tot_eff_h");
     tot_eff_h->Write();
     f->Close();
@@ -329,7 +329,7 @@ void draw_ratio(TGraphAsymmErrors* ratio, TString epsfilename, TString rname)
 
   TH1F* painter = ratio->GetHistogram();
   painter->GetXaxis()->SetTitle(painter->GetTitle());
-  if(epsfilename.Contains("pt"))  painter->GetXaxis()->SetTitle("p_{T} AK8 jet [GeV/c]");
+  if(epsfilename.Contains("pt"))  painter->GetXaxis()->SetTitle("p_{T} AK8 jet [GeV]");
   painter->GetYaxis()->SetTitle(rname);
   painter->GetYaxis()->CenterTitle(true);
   painter->SetTitle("");
@@ -493,7 +493,7 @@ void mistag_rate_zw()
  hname_all="topjet_topjet2/";
  hname_trig="topjet_pass_zwtag/";
  TGraphAsymmErrors* deff =get_eff("Data", obs, hist,  tot_eff, tot_err ,hname_all,hname_trig);
- TGraphAsymmErrors* mceff = get_eff("QCD", obs, hist, tot_eff, tot_err ,hname_all,hname_trig);
+ TGraphAsymmErrors* mceff = get_eff("QCD", obs, hist, tot_eff2, tot_err2 ,hname_all,hname_trig);
  TGraphAsymmErrors* ratio = get_ratio(deff, mceff);
    
   draw_ratio(ratio, folder+prefix + "ratio_"+hist+".eps", "Data / MC");

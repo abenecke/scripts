@@ -4,7 +4,7 @@ using namespace std;
 
 void btag_hists()
 {
-  TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/data2016";
+  TString directory = "/nfs/dust/cms/user/abenecke/ZPrimeTotTPrime/CMSSW_8X/rootfiles/elec_channel_30GeV";
   TFile * infile = new TFile(directory+"/uhh2.AnalysisModuleRunner.MC.TTbarAll.root");
 
 
