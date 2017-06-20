@@ -1,0 +1,143 @@
+#include "TH1.h"
+#include "TH2.h"
+#include <fstream>
+#include "TGraphAsymmErrors.h"
+
+//parameters
+double alpha3 = 0.118;
+double sp2 =0.56*0.56;
+double sp2R =0.6*0.6;
+double st2 =0.40*0.40;
+double ctt3= 2.27;
+double spq2 = sp2;
+double cpq2=1-spq2;
+double tt3 = 0.44;
+
+double decaytT(double MG, double MT){
+
+  double br = (alpha3/6) * MG * ((sp2 * (1-sp2))/(st2 * (1 - st2))) * (1-((MT*MT)/(MG*MG))) *  (1-(1/2)*((MT*MT)/(MG*MG))-(1/2)*((MT*MT*MT*MT)/(MG*MG*MG*MG)));
+
+  return br;
+}
+
+// double decaytrT(double MG, double MT){
+
+//   double br = (alpha3/6) * MG * ((sp2R * (1-sp2R))/(st2 * (1 - st2))) * (1-((MT*MT)/(MG*MG))) *  (1-(1/2)*((MT*MT)/(MG*MG))-(1/2)*((MT*MT*MT*MT)/(MG*MG*MG*MG)));
+
+//   return br;
+// }
+
+double decayTT(double MG, double MT){
+
+  double br = (alpha3/12) * MG *(((cpq2*ctt3-spq2 * tt3)*(cpq2*ctt3-spq2 * tt3)+ctt3*ctt3)*(1-((MT*MT)/(MG*MG)))+6*(cpq2*ctt3*ctt3 - spq2)*((MT*MT)/(MG*MG)))*sqrt(1-(4*((MT*MT)/(MG*MG))));
+
+  return br;
+}
+
+
+
+double decaytt(double MG, double MT){
+
+  double br = (alpha3/12) * MG * (sp2*ctt3 - sqrt(1-sp2)*tt3)*(sp2*ctt3 - sqrt(1-sp2)*tt3);
+
+  return br;
+}
+
+// double decaytrtr(double MG, double MT){
+
+//   double br = (alpha3/12) * MG * (sp2R*ctt3 - sqrt(1-sp2R)*tt3)*(sp2R*ctt3 - sqrt(1-sp2R)*tt3);
+
+//   return br;
+// }
+
+double decayqq(double MG, double MT){
+
+  double br = (alpha3/6) * MG * tt3*tt3;
+
+  return br;
+}
+
+
+// double decaytot(double MG, double MT){
+//   double br=0;
+//   if(MT > MG){ 
+//     br = decaytt(MG, MT) + decayqq(MG, MT);
+//   }else  if(MG < 2 * MT){ 
+//     br = decaytT(MG, MT) + decaytt(MG, MT) + decayqq(MG, MT);
+//   }else{
+//    br = decaytT(MG, MT) + decayTT(MG, MT) + decaytt(MG, MT) + decayqq(MG, MT);
+//   }
+//   return br;
+// }
+
+double decaytot(double MG, double MT){
+  double br=0;
+  if(MT > MG){ 
+    br = 2*decaytt(MG, MT) + 4*decayqq(MG, MT);
+  }else  if(MG < 2 * MT){ 
+    br =4*decaytT(MG, MT)+  2*decaytt(MG, MT) + 4*decayqq(MG, MT);
+  }else{
+   br = 4*decaytT(MG, MT) + 10*decayTT(MG, MT) + 2*decaytt(MG, MT) +4* decayqq(MG, MT);
+  }
+  return br;
+}
+
+void gstar(){
+
+  Double_t x[2501], y[2501];
+  for(int i=0; i<2500;i++){
+    x[i] = 500+i;
+    y[i] = decaytot(x[i],1000);
+  }
+  TGraph *gr1 = new TGraph (2500, x, y);
+  TCanvas *c = new TCanvas("c","",10,10,900,900);
+  gPad->SetTickx();
+  gPad->SetTicky();
+  c->SetLogy();
+  gr1->Draw();
+
+  for(int i=0; i<2500;i++){
+    x[i] = 500+i;
+    y[i] = decaytot(x[i],1000)/x[i];
+  }
+  TGraph *gr5 = new TGraph (2500, x, y);
+  TCanvas *c5 = new TCanvas("c5","",10,10,900,900);
+  gPad->SetTickx();
+  gPad->SetTicky();
+  //c3->SetLogy();
+  gr5->Draw();
+
+
+  for(int i=0; i<2500;i++){
+    x[i] = 500+i;
+    y[i] =4* decaytT(x[i],1000)/decaytot(x[i],1000);
+  }
+  TGraph *gr2 = new TGraph (2500, x, y);
+  TCanvas *c2 = new TCanvas("c2","",10,10,900,900);
+  gPad->SetTickx();
+  gPad->SetTicky();
+  // c->SetLogy();
+  gr2->SetMinimum(0);
+  gr2->SetMaximum(1.1);
+  gr2->Draw();
+
+  for(int i=0; i<2500;i++){
+    x[i] = 500+i;
+    y[i] =4* decaytt(x[i],1000)/decaytot(x[i],1000);
+  }
+  TGraph *gr3 = new TGraph (2500, x, y);
+  gr3 ->SetLineColor(kRed);
+  gr3->Draw("same");
+
+  for(int i=0; i<1000;i++){
+    x[i] = 2001+i;
+    y[i] =4* decayTT(x[i],1000)/decaytot(x[i],1000);
+  }
+  TGraph *gr4 = new TGraph (1000, x, y);
+  gr4 ->SetLineColor(kGreen);
+  gr4 ->Draw("same");
+
+
+
+
+}
